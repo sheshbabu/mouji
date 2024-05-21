@@ -1,0 +1,35 @@
+CREATE TABLE IF NOT EXISTS users (
+	user_id       INTEGER PRIMARY KEY AUTOINCREMENT,
+	email         TEXT NOT NULL,
+	password_hash TEXT NOT NULL,
+	is_admin      INTEGER DEFAULT 0,
+  	created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  	updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS sessions (
+	session_id TEXT PRIMARY KEY,
+  	expires_at TEXT
+);
+
+CREATE TABLE IF NOT EXISTS projects (
+	project_id TEXT PRIMARY KEY,
+	name       TEXT NOT NULL,
+	base_url   TEXT NOT NULL,
+  	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS pageviews (
+	pageview_id INTEGER PRIMARY KEY AUTOINCREMENT,
+	project_id  INTEGER NOT NULL,
+	path        TEXT NOT NULL,
+	title       TEXT NOT NULL,
+	referrer    TEXT NOT NULL,
+	received_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	
+	FOREIGN KEY (project_id)
+		REFERENCES projects (project_id)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE
+);

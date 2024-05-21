@@ -1,0 +1,14 @@
+{{define "navbar"}}
+<div class="navbar">
+    <a class="logo" href="/">mouji</a>
+
+    <div class="actions">
+        {{if .ShouldShowMenu}}
+            {{template "dropdown" .ProjectsDropdown}}
+            <div class="h-space-12"></div>
+            {{template "button" .SettingsButton}}
+        {{end}}
+    </div>
+
+</div>
+{{end}}

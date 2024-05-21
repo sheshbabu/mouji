@@ -1,0 +1,16 @@
+{{define "textarea"}}
+<div class="input-container">
+    <label for="{{.ID}}">{{.Label}}</label>
+    <br>
+    {{if ne .Hint ""}}
+        <div class="hint">{{.Hint}}</div>
+    {{end}}
+    <textarea
+        id="{{.ID}}"
+        name="{{.ID}}"
+        {{if eq .IsDisabled true}}
+            disabled
+        {{end}}
+    >{{.Content}}</textarea>
+</div>
+{{end}}

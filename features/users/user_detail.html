@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+    {{template "head" "Users"}}
+
+    <body>
+        {{template "navbar" .Navbar}}
+
+        <div class="section">
+            {{if eq .HasUsers false}}
+                <div class="title">Let's get started!</div>
+                <div class="subtitle">Create your admin account</div>
+            {{end}}
+            <form action="/users/new" method="post">
+                {{template "input" .EmailInput}}
+                {{template "input" .PasswordInput}}
+                <div class="v-space-24"></div>
+                {{template "button" .SubmitButton}}
+            </form>
+        </div>
+    </body>
+
+</html>

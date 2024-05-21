@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+    {{template "head" "Projects"}}
+
+    <body>
+        {{template "navbar" .Navbar}}
+
+        <div class="section">
+            {{if eq .IsNewProject true}}
+                <div class="title">New Project</div>
+            {{end}}
+            <form {{if eq .IsNewProject true}}action="/projects/new"{{else}}action="/projects/{{.ProjectID}}"{{end}} method="post">
+                {{template "input" .ProjectNameInput}}
+                {{template "input" .BaseURLInput}}
+                {{if eq .IsNewProject false}}
+                    {{template "textarea" .TrackingSnippetInput}}
+                {{end}}
+                <div class="v-space-24"></div>
+                {{template "button" .SubmitButton}}
+            </form>
+        </div>
+    </body>
+
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    {{template "head" "Settings"}}
+
+    <body>
+        {{template "navbar" .Navbar}}
+
+        <div class="section">
+            <div class="title">Projects</div>
+            <table>
+                <tr>
+                    <th>Project Name</th>
+                    <th>Actions</th>
+                </tr>
+                {{range .Projects}}
+                <tr>
+                    <td class="text">{{.Name}}</td>
+                    <td class="text">
+                        <a href="/projects/{{.ProjectID}}">edit</a>
+                    </td>
+                </tr>
+                {{end}}
+            </table>
+            <div class="v-space-12"></div>
+            {{template "button" .NewProjectButton}}
+        </div>
+    </body>
+
+</html>

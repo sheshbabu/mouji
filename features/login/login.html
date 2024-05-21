@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+    {{template "head" "Login"}}
+
+    <body>
+        {{template "navbar" .Navbar}}
+
+        <div class="section">
+            <div class="title">Login</div>
+            <form action="/login" method="post">
+                {{template "input" .EmailInput}}
+                {{template "input" .PasswordInput}}
+                <div class="v-space-24"></div>
+                {{template "button" .SubmitButton}}
+            </form>
+        </div>
+    </body>
+
+</html>
