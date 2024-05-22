@@ -13,6 +13,7 @@ import (
 
 type urlState struct {
 	selectedProjectID          string
+	selectedDateRange          string
 	currentPageViewTableOffset string
 }
 
@@ -38,10 +39,11 @@ func HandleHomePage(w http.ResponseWriter, r *http.Request) {
 
 	var state urlState
 	state.selectedProjectID = r.URL.Query().Get("project_id")
+	state.selectedDateRange = r.URL.Query().Get("daterange")
 	state.currentPageViewTableOffset = r.URL.Query().Get("current_pageview_table_offset")
 
 	if state.selectedProjectID == "" {
-		newURL := fmt.Sprintf("/?project_id=%s&current_pageview_table_offset=%d", projects[0].ProjectID, 0)
+		newURL := fmt.Sprintf("/?project_id=%s&daterange=%s&current_pageview_table_offset=%d", projects[0].ProjectID, "24h", 0)
 		http.Redirect(w, r, newURL, http.StatusSeeOther)
 		return
 	}
@@ -89,7 +91,28 @@ func getNavbar(state urlState, projects []projects.ProjectRecord) components.Nav
 	}
 	navbar.ProjectsDropdown.SelectedOption = selectedOption
 	navbar.ProjectsDropdown.AllOptions = allOptions
+
+	navbar.DateRange = getDateRange(state)
+
 	return navbar
+}
+
+func getDateRange(state urlState) components.DateRange {
+	var daterange components.DateRange
+
+	values := []string{"24h", "1w", "1m", "3m", "1y"}
+
+	for _, value := range values {
+		var option components.DateRangeOption
+		option.Name = value
+		option.Link = fmt.Sprintf("/?project_id=%s&daterange=%s", state.selectedProjectID, value)
+		if value == state.selectedDateRange {
+			option.IsSelected = true
+		}
+		daterange.Options = append(daterange.Options, option)
+	}
+
+	return daterange
 }
 
 func getPageViewsTable(state urlState) (pageViewsTable, error) {
@@ -113,7 +136,7 @@ func getPageViewsTable(state urlState) (pageViewsTable, error) {
 		},
 	}
 
-	records, err = pageviews.GetPaginatedPageViews(state.selectedProjectID, limit, pageViewTableOffset)
+	records, err = pageviews.GetPaginatedPageViews(state.selectedProjectID, state.selectedDateRange, limit, pageViewTableOffset)
 	if err != nil {
 		return table, err
 	}
@@ -127,11 +150,11 @@ func getPageViewsTable(state urlState) (pageViewsTable, error) {
 	}
 
 	if table.ShouldShowPagination && pageViewTableOffset != 0 {
-		table.Pagination.PrevLink = fmt.Sprintf("/?project_id=%s&current_pageview_table_offset=%d", state.selectedProjectID, pageViewTableOffset-limit)
+		table.Pagination.PrevLink = fmt.Sprintf("/?project_id=%s&daterange=%s&current_pageview_table_offset=%d", state.selectedProjectID, state.selectedDateRange, pageViewTableOffset-limit)
 	}
 
 	if table.ShouldShowPagination && pageViewTableOffset+limit < table.Pagination.TotalRecords {
-		table.Pagination.NextLink = fmt.Sprintf("/?project_id=%s&current_pageview_table_offset=%d", state.selectedProjectID, pageViewTableOffset+limit)
+		table.Pagination.NextLink = fmt.Sprintf("/?project_id=%s&daterange=%s&current_pageview_table_offset=%d", state.selectedProjectID, state.selectedDateRange, pageViewTableOffset+limit)
 	}
 
 	return table, nil

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"mouji/commons/sqlite"
+	"slices"
 )
 
 type PageViewRecord struct {
@@ -33,7 +34,7 @@ func insertPageView(record PageViewRecord) error {
 	return nil
 }
 
-func GetPaginatedPageViews(projectID string, limit int, offset int) ([]PaginatedPageViewRecord, error) {
+func GetPaginatedPageViews(projectID string, daterange string, limit int, offset int) ([]PaginatedPageViewRecord, error) {
 	var records []PaginatedPageViewRecord
 
 	query := `
@@ -46,6 +47,8 @@ func GetPaginatedPageViews(projectID string, limit int, offset int) ([]Paginated
 			pageviews 
 		WHERE
 			project_id = ?
+			AND
+			received_at >= DATE('now', ?)
 		GROUP BY
 			path
 		ORDER BY
@@ -56,7 +59,7 @@ func GetPaginatedPageViews(projectID string, limit int, offset int) ([]Paginated
 			?
 	`
 
-	rows, err := sqlite.DB.Query(query, projectID, limit, offset)
+	rows, err := sqlite.DB.Query(query, projectID, getDateRangeFilter(daterange), limit, offset)
 	if err != nil {
 		err = fmt.Errorf("error retrieving pageviews: %w", err)
 		slog.Error(err.Error())
@@ -73,4 +76,27 @@ func GetPaginatedPageViews(projectID string, limit int, offset int) ([]Paginated
 	}
 
 	return records, nil
+}
+
+func getDateRangeFilter(daterange string) string {
+	values := []string{"24h", "1w", "1m", "3m", "1y"}
+
+	if !slices.Contains(values, daterange) {
+		daterange = values[0]
+	}
+
+	switch daterange {
+	case "24h":
+		return "-1 days"
+	case "1w":
+		return "-6 days"
+	case "1m":
+		return "-1 months"
+	case "3m":
+		return "-3 months"
+	case "1y":
+		return "-1 years"
+	}
+
+	return "-1 days"
 }

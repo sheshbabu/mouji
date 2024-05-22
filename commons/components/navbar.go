@@ -3,6 +3,7 @@ package components
 type Navbar struct {
 	ShouldShowMenu   bool
 	ProjectsDropdown Dropdown
+	DateRange        DateRange
 	SettingsButton   Button
 }
 

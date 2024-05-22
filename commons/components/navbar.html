@@ -6,6 +6,8 @@
         {{if .ShouldShowMenu}}
             {{template "dropdown" .ProjectsDropdown}}
             <div class="h-space-12"></div>
+            {{template "daterange" .DateRange}}
+            <div class="h-space-12"></div>
             {{template "button" .SettingsButton}}
         {{end}}
     </div>

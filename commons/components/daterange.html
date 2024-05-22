@@ -1,0 +1,7 @@
+{{define "daterange"}}
+    <div class="daterange">
+        {{range .Options}}
+            <a class="daterange-option {{if eq .IsSelected true}}selected{{end}}" href="{{.Link}}">{{.Name}}</a>
+        {{end}}
+    </div>
+{{end}}

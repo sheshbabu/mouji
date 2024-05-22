@@ -94,8 +94,17 @@ th {
 
 @media screen and (max-width: 900px) {
     .navbar {
-        height: 100px;
+        margin-top: 24px;
         flex-direction: column;
+        align-items: flex-start;
+
+        .actions {
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: space-between;
+            height: 132px;
+            margin-top: 24px;
+        }
     }
 }
 
@@ -111,6 +120,12 @@ th {
         margin-top: 4px;
         color: var(--gray-400);
         font-size: 16px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .section {
+        margin-top: 184px;
     }
 }
 
@@ -172,7 +187,8 @@ button.button-container {
 
 .button,
 .pagination,
-.dropdown-button {
+.dropdown-button,
+.daterange {
     display: flex;
     height: 34px;
     align-items: center;
@@ -296,6 +312,33 @@ a.dropdown-option {
                 stroke: var(--gray-400);
             }
         }
+    }
+}
+
+.daterange {
+    padding: 0;
+    cursor: pointer;
+    background-color: var(--zinc-100);
+    border-color: var(--zinc-100);
+
+    a {
+        transition-property: background-color;
+        transition-duration: 500ms;
+        text-decoration: none;
+        height: 16px;
+        padding: 6px 12px;
+        margin: 4px;
+    }
+
+    a:hover {
+        background-color: var(--zinc-200);
+        border-radius: 4px;
+    }
+
+    a.selected {
+        background-color: white;
+        border-radius: 4px;
+        box-shadow: var(--shadow-1);
     }
 }
 
