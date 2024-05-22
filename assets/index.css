@@ -22,6 +22,12 @@ body {
     margin: 24px auto;
 }
 
+@media screen and (max-width: 900px) {
+    body {
+        margin: 24px;
+    }
+}
+
 .h-space-12 {
     display: inline;
     margin-left: 12px;
@@ -83,6 +89,13 @@ th {
 
     .actions {
         display: flex;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .navbar {
+        height: 100px;
+        flex-direction: column;
     }
 }
 
