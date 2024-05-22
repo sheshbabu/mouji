@@ -48,7 +48,7 @@ svg.icon {
 
     path {
         stroke: var(--gray-900);
-        stroke-width: 1;
+        stroke-width: 1.5;
     }
 }
 
@@ -202,7 +202,6 @@ button.button-container {
         svg.icon {
             path {
                 stroke: white;
-                stroke-width: 2;
             }
         }
 
@@ -291,6 +290,12 @@ a.dropdown-option {
 
     a.disabled {
         cursor: not-allowed;
+
+        svg.icon {
+            path {
+                stroke: var(--gray-400);
+            }
+        }
     }
 }
 
