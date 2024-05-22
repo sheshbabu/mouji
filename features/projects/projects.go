@@ -117,7 +117,7 @@ func renderProjectDetailPage(w http.ResponseWriter, isNewProject bool, projectID
 			ID:          "base_url",
 			Label:       "Base URL",
 			Type:        "url",
-			Placeholder: "Example: https://www.blog.com",
+			Placeholder: "Example: https://www.myserver.com",
 			Error:       serverBaseURLError,
 			Value:       serverBaseURL,
 			Hint:        "Enter the Base URL of the server to correctly generate your tracking snippet",
