@@ -6,10 +6,12 @@ Minimal Web Analytics
 
 ### Features
 * Track pageviews
+* Multiple projects support
 * No cookies used
 * No personal data collected
 * Single binary deployment
-* Multiple projects support
+* Low resource usage
+* Minimal dependency footprint
 
 
 ### Philosophy
