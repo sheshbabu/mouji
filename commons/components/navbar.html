@@ -2,15 +2,15 @@
 <div class="navbar">
     <a class="logo" href="/">mouji</a>
 
+    {{if .ShouldShowActions}}
     <div class="actions">
-        {{if .ShouldShowMenu}}
-            {{template "dropdown" .ProjectsDropdown}}
-            <div class="h-space-12"></div>
-            {{template "daterange" .DateRange}}
-            <div class="h-space-12"></div>
-            {{template "button" .SettingsButton}}
-        {{end}}
+        {{template "dropdown" .ProjectsDropdown}}
+        <div class="h-space-12"></div>
+        {{template "daterange" .DateRange}}
+        <div class="h-space-12"></div>
+        {{template "button" .SettingsButton}}
     </div>
+    {{end}}
 
 </div>
 {{end}}
