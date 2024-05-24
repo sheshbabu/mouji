@@ -49,7 +49,7 @@ func GetPaginatedPageViews(projectID string, daterange string, limit int, offset
 		WHERE
 			project_id = ?
 			AND
-			received_at >= DATE('now', ?)
+			received_at >= DATE('2024-05-24', ?)
 		GROUP BY
 			path
 		ORDER BY
