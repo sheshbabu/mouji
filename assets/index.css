@@ -20,6 +20,7 @@
 body {
     max-width: 900px;
     margin: 24px auto;
+    padding-bottom: 24px;
 }
 
 @media screen and (max-width: 948px) {
