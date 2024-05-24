@@ -46,7 +46,7 @@ func GetUserByEmail(email string) (UserRecord, error) {
 	return user, nil
 }
 
-func insertUser(email string, passwordHash string, isAdmin bool) error {
+func InsertUser(email string, passwordHash string, isAdmin bool) error {
 	query := "INSERT INTO users (email, password_hash, is_admin) VALUES (?, ?, ?);"
 
 	_, err := sqlite.DB.Exec(query, email, passwordHash, isAdmin)

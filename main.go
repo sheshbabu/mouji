@@ -19,7 +19,7 @@ import (
 //go:embed all:commons all:features
 var resources embed.FS
 
-//go:embed assets/*.css
+//go:embed assets/*
 var assets embed.FS
 
 //go:embed migrations/*.sql
@@ -34,6 +34,8 @@ func main() {
 	}()
 
 	sqlite.NewDB()
+	defer sqlite.DB.Close()
+
 	sqlite.Migrate(migrations)
 
 	templates.NewTemplates(resources)

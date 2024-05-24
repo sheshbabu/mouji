@@ -36,6 +36,8 @@ func GetAllProjects() []ProjectRecord {
 	query := "SELECT project_id, name, base_url FROM projects ORDER BY created_at DESC"
 
 	rows, err := sqlite.DB.Query(query)
+	defer rows.Close()
+
 	if err != nil {
 		err = fmt.Errorf("error retrieving projects: %w", err)
 		panic(err)
@@ -70,7 +72,7 @@ func getProjectByID(projectID string) (ProjectRecord, error) {
 	return project, nil
 }
 
-func insertProject(projectName string, serverBaseURL string) (ProjectRecord, error) {
+func InsertProject(projectName string, serverBaseURL string) (ProjectRecord, error) {
 	var project ProjectRecord
 
 	query := `

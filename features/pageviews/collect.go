@@ -35,7 +35,7 @@ func HandleCollect(w http.ResponseWriter, r *http.Request) {
 		Referrer:  payload.Referrer,
 	}
 
-	err = insertPageView(record)
+	err = InsertPageView(record)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

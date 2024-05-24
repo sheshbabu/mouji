@@ -3,6 +3,7 @@ package pageviews
 import (
 	"fmt"
 	"log/slog"
+	"mouji/commons/components"
 	"mouji/commons/sqlite"
 	"slices"
 )
@@ -21,7 +22,7 @@ type PaginatedPageViewRecord struct {
 	TotalRecords int
 }
 
-func insertPageView(record PageViewRecord) error {
+func InsertPageView(record PageViewRecord) error {
 	query := "INSERT INTO pageviews (project_id, path, title, referrer) VALUES (?, ?, ?, ?);"
 
 	_, err := sqlite.DB.Exec(query, record.ProjectID, record.Path, record.Title, record.Referrer)
@@ -60,6 +61,8 @@ func GetPaginatedPageViews(projectID string, daterange string, limit int, offset
 	`
 
 	rows, err := sqlite.DB.Query(query, projectID, getDateRangeFilter(daterange), limit, offset)
+	defer rows.Close()
+
 	if err != nil {
 		err = fmt.Errorf("error retrieving pageviews: %w", err)
 		slog.Error(err.Error())
@@ -79,10 +82,8 @@ func GetPaginatedPageViews(projectID string, daterange string, limit int, offset
 }
 
 func getDateRangeFilter(daterange string) string {
-	values := []string{"24h", "1w", "1m", "3m", "1y"}
-
-	if !slices.Contains(values, daterange) {
-		daterange = values[0]
+	if !slices.Contains(components.DateRangeValues, daterange) {
+		daterange = components.DateRangeValues[0]
 	}
 
 	switch daterange {

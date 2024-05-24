@@ -86,6 +86,7 @@ func getUnAppliedMigrations(migrations []migration) []migration {
 	query := "SELECT version FROM migrations ORDER BY version ASC"
 
 	rows, err := DB.Query(query)
+	defer rows.Close()
 
 	if err != nil {
 		err = fmt.Errorf("error retrieving migrations: %w", err)

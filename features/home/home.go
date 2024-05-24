@@ -43,7 +43,7 @@ func HandleHomePage(w http.ResponseWriter, r *http.Request) {
 	state.currentPageViewTableOffset = r.URL.Query().Get("current_pageview_table_offset")
 
 	if state.selectedProjectID == "" {
-		newURL := fmt.Sprintf("/?project_id=%s&daterange=%s&current_pageview_table_offset=%d", projects[0].ProjectID, "24h", 0)
+		newURL := fmt.Sprintf("/?project_id=%s&daterange=%s&current_pageview_table_offset=%d", projects[0].ProjectID, components.DateRangeValues[0], 0)
 		http.Redirect(w, r, newURL, http.StatusSeeOther)
 		return
 	}
@@ -80,7 +80,7 @@ func getNavbar(state urlState, projects []projects.ProjectRecord) components.Nav
 	for _, project := range projects {
 		var option components.DropdownOption
 		option.Name = project.Name
-		option.Link = fmt.Sprintf("/?project_id=%s", project.ProjectID)
+		option.Link = fmt.Sprintf("/?project_id=%s&daterange=%s", project.ProjectID, state.selectedDateRange)
 		allOptions = append(allOptions, option)
 		if project.ProjectID == state.selectedProjectID {
 			selectedOption = option
@@ -100,9 +100,7 @@ func getNavbar(state urlState, projects []projects.ProjectRecord) components.Nav
 func getDateRange(state urlState) components.DateRange {
 	var daterange components.DateRange
 
-	values := []string{"24h", "1w", "1m", "3m", "1y"}
-
-	for _, value := range values {
+	for _, value := range components.DateRangeValues {
 		var option components.DateRangeOption
 		option.Name = value
 		option.Link = fmt.Sprintf("/?project_id=%s&daterange=%s", state.selectedProjectID, value)

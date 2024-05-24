@@ -69,7 +69,7 @@ func HandleProjectDetailSubmit(w http.ResponseWriter, r *http.Request) {
 
 	var project ProjectRecord
 	if isNewProject {
-		project, err = insertProject(projectName, serverBaseURL)
+		project, err = InsertProject(projectName, serverBaseURL)
 	} else {
 		project, err = updateProject(projectID, projectName, serverBaseURL)
 	}
