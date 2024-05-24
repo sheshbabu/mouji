@@ -22,7 +22,7 @@ body {
     margin: 24px auto;
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 948px) {
     body {
         margin: 24px;
     }
@@ -75,6 +75,10 @@ th {
     }
 }
 
+th:last-child {
+    width: 70px;
+}
+
 .navbar {
     height: 36px;
     display: flex;
@@ -92,11 +96,15 @@ th {
     }
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 750px) {
     .navbar {
         margin-top: 24px;
         flex-direction: column;
         align-items: flex-start;
+
+        &:has(.actions) {
+            height: 196px;
+        }
 
         .actions {
             flex-direction: column;
@@ -121,11 +129,15 @@ th {
         color: var(--gray-400);
         font-size: 16px;
     }
+
+    .empty {
+        margin-top: 12px;
+    }
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 750px) {
     .section {
-        margin-top: 184px;
+        margin-top: 48px;
     }
 }
 
@@ -255,6 +267,8 @@ button.button-container {
     width: 100%;
     box-shadow: var(--shadow-2);
     display: none;
+    background-color: white;
+    z-index: 1;
 }
 
 .button-container:hover {
