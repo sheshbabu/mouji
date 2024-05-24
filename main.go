@@ -4,7 +4,6 @@ import (
 	"embed"
 	"log/slog"
 	"mouji/commons/auth"
-	"mouji/commons/seed"
 	"mouji/commons/sqlite"
 	"mouji/commons/templates"
 	"mouji/features/home"
@@ -37,9 +36,9 @@ func main() {
 
 	sqlite.Migrate(migrations)
 
-	seed.SeedUsers(resources)
-	seed.SeedProjects(resources)
-	seed.SeedPageViews(resources)
+	// seed.SeedUsers(resources)
+	// seed.SeedProjects(resources)
+	// seed.SeedPageViews(resources)
 
 	templates.NewTemplates(resources)
 
