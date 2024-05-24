@@ -1,17 +1,17 @@
 package seed
 
 import (
+	"embed"
 	"encoding/csv"
 	"io"
 	"math/rand"
 	"mouji/features/pageviews"
 	"mouji/features/projects"
 	"mouji/features/users"
-	"os"
 )
 
-func SeedUsers() {
-	rows := readCSV("./commons/seed/users.csv")
+func SeedUsers(resources embed.FS) {
+	rows := readCSV(resources, "commons/seed/users.csv")
 	for i, row := range rows {
 		if i == 0 {
 			continue
@@ -25,8 +25,8 @@ func SeedUsers() {
 	}
 }
 
-func SeedProjects() {
-	rows := readCSV("./commons/seed/projects.csv")
+func SeedProjects(resources embed.FS) {
+	rows := readCSV(resources, "commons/seed/projects.csv")
 	for i, row := range rows {
 		if i == 0 {
 			continue
@@ -39,7 +39,7 @@ func SeedProjects() {
 	}
 }
 
-func SeedPageViews() {
+func SeedPageViews(resources embed.FS) {
 	projects := projects.GetAllProjects()
 	projectNameToIDMap := make(map[string]string)
 
@@ -47,7 +47,7 @@ func SeedPageViews() {
 		projectNameToIDMap[project.Name] = project.ProjectID
 	}
 
-	rows := readCSV("./commons/seed/pageviews.csv")
+	rows := readCSV(resources, "commons/seed/pageviews.csv")
 	for i, row := range rows {
 		if i == 0 {
 			continue
@@ -65,8 +65,9 @@ func SeedPageViews() {
 	}
 }
 
-func readCSV(path string) [][]string {
-	file, err := os.Open(path)
+func readCSV(resources embed.FS, path string) [][]string {
+	file, err := embed.FS.Open(resources, path)
+
 	defer file.Close()
 
 	if err != nil {

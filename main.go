@@ -37,9 +37,9 @@ func main() {
 
 	sqlite.Migrate(migrations)
 
-	seed.SeedUsers()
-	seed.SeedProjects()
-	seed.SeedPageViews()
+	seed.SeedUsers(resources)
+	seed.SeedProjects(resources)
+	seed.SeedPageViews(resources)
 
 	templates.NewTemplates(resources)
 
