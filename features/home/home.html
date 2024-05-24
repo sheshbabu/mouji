@@ -7,21 +7,25 @@
         
         <div class="section">
             <div class="title">Page Views</div>
-            <table>
-                <tr>
-                    <th>Title</th>
-                    <th>Views</th>
-                </tr>
-                {{range .PageViewsTable.Records}}
+            {{if gt (len .PageViewsTable.Records) 0}}
+                <table>
                     <tr>
-                        <td class="text">
-                            <div>{{ .Title }}</div>
-                            <div class="path">{{ .Path }}</div>
-                        </td>
-                        <td class="number">{{ .Views }}</td>
+                        <th>Title</th>
+                        <th>Views</th>
                     </tr>
-                {{end}}
-            </table>
+                    {{range .PageViewsTable.Records}}
+                        <tr>
+                            <td class="text">
+                                <div>{{ .Title }}</div>
+                                <div class="path">{{ .Path }}</div>
+                            </td>
+                            <td class="number">{{ .Views }}</td>
+                        </tr>
+                    {{end}}
+                </table>
+            {{else}}
+                <div class="empty">No records found</div>
+            {{end}}
             {{if .PageViewsTable.ShouldShowPagination}}
                 {{template "pagination" .PageViewsTable.Pagination}}
             {{end}}
