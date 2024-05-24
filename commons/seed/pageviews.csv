@@ -1,0 +1,25 @@
+project_name,path,title,referrer
+Blog,/posts/fastapi-structured-json-logging/,Structured JSON Logging using FastAPI,https://www.google.com
+Blog,/posts/rust-module-system/,Clear explanation of Rust’s module system,https://www.google.com
+Blog,/posts/thoughts-on-the-future-of-software-development/,Thoughts on the Future of Software Development,https://www.google.com
+Blog,/posts/rust-error-handling/,"Beginner's guide to Error Handling in Rust",https://www.google.com
+Blog,/posts/nginx-caching-proxy/,Make your backend more reliable using Nginx caching proxy,https://www.google.com
+Blog,/posts/rust-wasm-yew-single-page-application/,Single Page Applications using Rust,https://www.google.com
+Blog,/posts/exploring-singapore-onemap-api/,Exploring Singapore’s OneMap API,https://www.google.com
+Blog,/posts/system-wide-text-summarization-using-ollama-and-applescript/,System-wide text summarization using Ollama and AppleScript,https://www.google.com
+Blog,/posts/why-use-azure-openai-when-you-have-openai/,Why use Azure OpenAI when you have OpenAI?,https://www.google.com
+Blog,/posts/rust-for-javascript-developers-pattern-matching-and-enums/,Rust for JavaScript Developers - Pattern Matching and Enums,https://www.github.com
+Blog,/tags/Rust-Beginners/,"Shesh's blog",https://www.github.com
+Blog,/posts/automatic-pageview-tracking-using-react-router/,Automatic PageView Tracking using React Router,https://www.github.com
+Blog,/posts/running-express-over-https-in-localhost/,Running Express over HTTPS in localhost,https://www.github.com
+Blog,/posts/taurus-writing-jmeter-load-tests-as-code/,Taurus: Writing JMeter Load Tests As Code,https://www.github.com
+Blog,/posts/analyzing-slow-python-code-using-cprofile/,Analyzing Slow Python Code using cProfile,https://www.github.com
+Blog,/posts/blocking-usage-of-the-any-type-in-typescript-codebases/,Blocking usage of the any type in TypeScript codebases,https://www.google.com
+Blog,/posts/rust-for-javascript-developers-functions-and-control-flow/,Rust for JavaScript Developers - Functions and Control Flow,https://www.google.com
+Blog,/posts/measuring-response-times-of-express-route-handlers/,Measuring response times of Express route handlers,https://www.google.com
+Blog,/posts/minimal-viable-search-using-postgres/,Minimal Viable Search using Postgres,https://www.google.com
+Blog,/posts/packaging-node-js-code-into-cross-platform-executables/,Packaging Node.js code into cross platform executables,https://www.google.com
+Blog,/posts/publishing-npx-command-to-npm/,Publishing an npx command to npm,https://www.google.com
+Blog,/posts/rust-for-javascript-developers-variables-and-data-types/,Rust for JavaScript Developers - Variables and Data Types,https://www.google.com
+Blog,/posts/using-optimizely-with-react/,Using Optimizely with React,https://www.google.com
+Blog,/posts/visual-explanation-of-saml-authentication/,Visual explanation of SAML authentication,https://www.google.com
