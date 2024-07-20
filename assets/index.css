@@ -25,7 +25,13 @@ body {
 
 @media screen and (max-width: 948px) {
     body {
-        margin: 24px;
+        margin-top: 24px;
+        /* https://stackoverflow.com/a/2711132 */
+        -webkit-text-size-adjust: 100%;
+        /* https: //webkit.org/blog/7929/designing-websites-for-iphone-x/ */
+        margin-bottom: max(24px, env(safe-area-inset-bottom));
+        margin-left: max(24px, env(safe-area-inset-left));
+        margin-right: max(24px, env(safe-area-inset-right));
     }
 }
 
