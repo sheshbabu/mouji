@@ -68,22 +68,45 @@ table {
     box-shadow: 0 0 0 1px var(--zinc-200);
 }
 
-td,
-th {
-    border: 1px solid var(--zinc-200);
+tr {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+    border-bottom: 1px solid var(--zinc-200);
+}
+
+tr:last-child {
+    border-bottom: none;
+}
+
+td {
     text-align: left;
     vertical-align: text-top;
-    padding: 8px;
 
     .path {
         font-size: 12px;
         margin-top: 4px;
         color: var(--gray-400);
     }
-}
 
-th:last-child {
-    width: 70px;
+    &.metrics {
+        display: flex;
+        align-items: center;
+        justify-content: end;
+
+        .value {
+            margin-right: -4px;
+        }
+
+        svg {
+            padding-right: 0;
+
+            path {
+                stroke: var(--gray-400);
+                stroke-width: 1.5;
+            }
+        }
+    }
 }
 
 .navbar {
@@ -124,7 +147,13 @@ th:last-child {
 }
 
 .section {
-    margin-top: 80px;
+    margin-top: 48px;
+
+    .title-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
 
     .title {
         font-size: 20px;

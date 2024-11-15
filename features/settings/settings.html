@@ -6,12 +6,11 @@
         {{template "navbar" .Navbar}}
 
         <div class="section">
-            <div class="title">Projects</div>
+            <div class="title-bar">
+                <div class="title">Projects</div>
+                {{template "button" .NewProjectButton}}
+            </div>
             <table>
-                <tr>
-                    <th>Project Name</th>
-                    <th>Actions</th>
-                </tr>
                 {{range .Projects}}
                 <tr>
                     <td class="text">{{.Name}}</td>
@@ -21,8 +20,6 @@
                 </tr>
                 {{end}}
             </table>
-            <div class="v-space-12"></div>
-            {{template "button" .NewProjectButton}}
         </div>
     </body>
 
