@@ -22,6 +22,11 @@ type PaginatedPageViewRecord struct {
 	TotalRecords int
 }
 
+type PageViewCountByInterval struct {
+	Interval string `json:"interval"`
+	Count    int    `json:"count"`
+}
+
 func InsertPageView(record PageViewRecord) error {
 	query := "INSERT INTO pageviews (project_id, path, title, referrer) VALUES (?, ?, ?, ?);"
 
@@ -49,7 +54,7 @@ func GetPaginatedPageViews(projectID string, daterange components.DataRangeType,
 		WHERE
 			project_id = ?
 			AND
-			received_at >= DATE('now', ?)
+			received_at >= DATETIME('now', ?)
 		GROUP BY
 			path
 		ORDER BY
@@ -61,17 +66,55 @@ func GetPaginatedPageViews(projectID string, daterange components.DataRangeType,
 	`
 
 	rows, err := sqlite.DB.Query(query, projectID, getDateRangeFilter(daterange), limit, offset)
-	defer rows.Close()
-
 	if err != nil {
 		err = fmt.Errorf("error retrieving pageviews: %w", err)
 		slog.Error(err.Error())
 		return records, err
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var record PaginatedPageViewRecord
 		err = rows.Scan(&record.Title, &record.Path, &record.Views, &record.TotalRecords)
+		if err != nil {
+			return records, err
+		}
+		records = append(records, record)
+	}
+
+	return records, nil
+}
+
+func GetPageViewCountsByInterval(projectID string, daterange components.DataRangeType) ([]PageViewCountByInterval, error) {
+	var records []PageViewCountByInterval
+
+	query := `
+		SELECT
+			STRFTIME(?, received_at) AS interval,
+			COUNT(*) AS count
+		FROM
+			pageviews
+		WHERE
+			project_id = ?
+			AND
+			received_at >= DATETIME('now', ?)
+		GROUP BY
+			interval
+		ORDER BY
+			received_at
+	`
+
+	rows, err := sqlite.DB.Query(query, getDateRangeIntervalFormat(daterange), projectID, getDateRangeFilter(daterange))
+	if err != nil {
+		err = fmt.Errorf("error retrieving pageview counts: %w", err)
+		slog.Error(err.Error())
+		return records, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var record PageViewCountByInterval
+		err = rows.Scan(&record.Interval, &record.Count)
 		if err != nil {
 			return records, err
 		}
@@ -88,7 +131,7 @@ func getDateRangeFilter(daterange components.DataRangeType) string {
 
 	switch daterange {
 	case "24h":
-		return "-1 days"
+		return "-24 hours"
 	case "1w":
 		return "-6 days"
 	case "1m":
@@ -99,5 +142,22 @@ func getDateRangeFilter(daterange components.DataRangeType) string {
 		return "-1 years"
 	}
 
-	return "-1 days"
+	return "-24 hours"
+}
+
+func getDateRangeIntervalFormat(daterange components.DataRangeType) string {
+	switch daterange {
+	case "24h":
+		return "%Y-%m-%d %H"
+	case "1w":
+		return "%Y-%m-%d"
+	case "1m":
+		return "%Y-%m-%d"
+	case "3m":
+		return "%Y-%m-%d"
+	case "1y":
+		return "%Y-W%W"
+	}
+
+	return "%Y-%m-%d %H"
 }
