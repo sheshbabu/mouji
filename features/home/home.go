@@ -54,12 +54,20 @@ func HandleHomePage(w http.ResponseWriter, r *http.Request) {
 func renderHomePage(w http.ResponseWriter, state urlState, projects []projects.ProjectRecord) {
 	type templateData struct {
 		Navbar         components.Navbar
+		PageViewsChart components.BarChart
 		PageViewsTable pageViewsTable
 	}
 
 	navbar := getNavbar(state, projects)
-	pageviews, err := getPageViewsTable(state)
 
+	pageViewsCount, err := pageviews.GetPageViewCountsByInterval(state.selectedProjectID, state.selectedDateRange)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	barChart := components.NewBarChart(pageViewsCount)
+
+	pageviews, err := getPageViewsTable(state)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -67,6 +75,7 @@ func renderHomePage(w http.ResponseWriter, state urlState, projects []projects.P
 
 	tmplData := templateData{
 		Navbar:         navbar,
+		PageViewsChart: barChart,
 		PageViewsTable: pageviews,
 	}
 

@@ -22,11 +22,6 @@ type PaginatedPageViewRecord struct {
 	TotalRecords int
 }
 
-type PageViewCountByInterval struct {
-	Interval string `json:"interval"`
-	Count    int    `json:"count"`
-}
-
 func InsertPageView(record PageViewRecord) error {
 	query := "INSERT INTO pageviews (project_id, path, title, referrer) VALUES (?, ?, ?, ?);"
 
@@ -85,8 +80,8 @@ func GetPaginatedPageViews(projectID string, daterange components.DataRangeType,
 	return records, nil
 }
 
-func GetPageViewCountsByInterval(projectID string, daterange components.DataRangeType) ([]PageViewCountByInterval, error) {
-	var records []PageViewCountByInterval
+func GetPageViewCountsByInterval(projectID string, daterange components.DataRangeType) ([]components.BarChartInputDataPoint, error) {
+	var records []components.BarChartInputDataPoint
 
 	query := `
 		SELECT
@@ -113,8 +108,8 @@ func GetPageViewCountsByInterval(projectID string, daterange components.DataRang
 	defer rows.Close()
 
 	for rows.Next() {
-		var record PageViewCountByInterval
-		err = rows.Scan(&record.Interval, &record.Count)
+		var record components.BarChartInputDataPoint
+		err = rows.Scan(&record.Label, &record.Data)
 		if err != nil {
 			return records, err
 		}
@@ -156,7 +151,7 @@ func getDateRangeIntervalFormat(daterange components.DataRangeType) string {
 	case "3m":
 		return "%Y-%m-%d"
 	case "1y":
-		return "%Y-W%W"
+		return "%Y-%m"
 	}
 
 	return "%Y-%m-%d %H"

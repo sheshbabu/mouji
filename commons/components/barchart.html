@@ -1,0 +1,50 @@
+{{define "barchart"}}
+    <div class="barchart">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {{.Width}} {{.Height}}">
+            <rect width="{{.Width}}" height="{{.Height}}" fill="white" />
+            <g fill="#E4E4E7" fill-opacity="0.2">
+                {{range .Data}}
+                    <rect x="{{.X}}" y="{{.TopOffset}}" width="{{.Width}}" height="{{.MaxHeight}}" />
+                {{end}}
+            </g>
+            <g fill="#1B1C1E">
+                {{range .Data}}
+                    <rect class="bar" x="{{.X}}" y="{{.Y}}" width="{{.Width}}" height="{{.Height}}" data-value="{{.Value}}" data-label="{{.Label}}"/>
+                {{end}}
+            </g>
+        </svg>
+        <div class="tooltip">
+            <div class="label">xxx</div>
+            <div class="value">yyy</div>
+        </div>
+        <script>
+            const tooltip = document.querySelector('.tooltip');
+            const tooltipLabel = document.querySelector('.tooltip > .label');
+            const tooltipValue = document.querySelector('.tooltip > .value');
+            const bars = document.querySelectorAll('.bar');
+
+            const tooltipHeight = 40;
+            const tooltipWidth = 120;
+
+            bars.forEach(bar => {
+                bar.addEventListener('mousemove', (e) => {
+                    const label = bar.getAttribute('data-label');
+                    const value = bar.getAttribute('data-value');
+
+                    const rect = bar.getBoundingClientRect();
+                    const topY = rect.top + window.scrollY;
+                    
+                    tooltip.style.display = 'flex';
+                    tooltip.style.left = `${rect.x + rect.width + 5}px`;
+                    tooltip.style.top = `${topY - tooltipHeight}px`;
+                    tooltipLabel.textContent = label;
+                    tooltipValue.textContent = `${value} views`;
+                });
+
+                bar.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
+            });
+        </script>
+    </div>
+{{end}}

@@ -393,6 +393,33 @@ a.dropdown-option {
     }
 }
 
+.barchart {
+    margin-top: 48px;
+
+    .tooltip {
+        position: absolute;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        height: 40px;
+        padding: 8px;
+        border-radius: 6px;
+        box-shadow: var(--shadow-1);
+        background: var(--gray-900);
+
+        .label {
+            font-size: 12px;
+            color: var(--gray-400);
+        }
+
+        .value {
+            font-size: 14px;
+            margin-top: 8px;
+            color: white;
+        }
+    }
+}
+
 /* Lato Regular */
 @font-face {
     font-family: "Lato";
