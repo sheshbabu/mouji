@@ -35,7 +35,7 @@ func InsertPageView(record PageViewRecord) error {
 	return nil
 }
 
-func GetPaginatedPageViews(projectID string, daterange string, limit int, offset int) ([]PaginatedPageViewRecord, error) {
+func GetPaginatedPageViews(projectID string, daterange components.DataRangeType, limit int, offset int) ([]PaginatedPageViewRecord, error) {
 	var records []PaginatedPageViewRecord
 
 	query := `
@@ -81,7 +81,7 @@ func GetPaginatedPageViews(projectID string, daterange string, limit int, offset
 	return records, nil
 }
 
-func getDateRangeFilter(daterange string) string {
+func getDateRangeFilter(daterange components.DataRangeType) string {
 	if !slices.Contains(components.DateRangeValues, daterange) {
 		daterange = components.DateRangeValues[0]
 	}

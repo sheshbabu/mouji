@@ -1,13 +1,15 @@
 package components
 
+type DataRangeType string
+
 type DateRange struct {
 	Options []DateRangeOption
 }
 
 type DateRangeOption struct {
-	Name       string
+	Name       DataRangeType
 	Link       string
 	IsSelected bool
 }
 
-var DateRangeValues = []string{"24h", "1w", "1m", "3m", "1y"}
+var DateRangeValues = []DataRangeType{"24h", "1w", "1m", "3m", "1y"}

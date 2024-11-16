@@ -13,7 +13,7 @@ import (
 
 type urlState struct {
 	selectedProjectID          string
-	selectedDateRange          string
+	selectedDateRange          components.DataRangeType
 	currentPageViewTableOffset string
 }
 
@@ -39,7 +39,7 @@ func HandleHomePage(w http.ResponseWriter, r *http.Request) {
 
 	var state urlState
 	state.selectedProjectID = r.URL.Query().Get("project_id")
-	state.selectedDateRange = r.URL.Query().Get("daterange")
+	state.selectedDateRange = components.DataRangeType(r.URL.Query().Get("daterange"))
 	state.currentPageViewTableOffset = r.URL.Query().Get("current_pageview_table_offset")
 
 	if state.selectedProjectID == "" {
