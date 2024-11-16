@@ -1,11 +1,13 @@
 package main
 
 import (
+	"time"
 	"embed"
 	"log/slog"
 	"mouji/commons/auth"
 	"mouji/commons/sqlite"
 	"mouji/commons/templates"
+	"mouji/commons/session"
 	"mouji/features/home"
 	"mouji/features/login"
 	"mouji/features/pageviews"
@@ -39,6 +41,8 @@ func main() {
 	sqlite.Migrate(migrations)
 
 	templates.NewTemplates(resources)
+
+	go runBackgroundTasks()
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -78,4 +82,10 @@ func newRouter() *http.ServeMux {
 func addPrivateRoute(mux *http.ServeMux, pattern string, handlerFunc func(w http.ResponseWriter, r *http.Request)) {
 	handler := http.HandlerFunc(handlerFunc)
 	mux.HandleFunc(pattern, auth.EnsureAuthenticated(handler))
+}
+
+func runBackgroundTasks() {
+	for range time.Tick(24 * time.Hour) {
+		session.DeleteExpiredSessions()
+	}
 }

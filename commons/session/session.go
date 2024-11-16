@@ -80,3 +80,12 @@ func IsValidSession(sessionID string) bool {
 
 	return true
 }
+
+func DeleteExpiredSessions() {
+	query := "DELETE FROM sessions WHERE expires_at < ?"
+	_, err := sqlite.DB.Exec(query, time.Now().Format(expiresAtFormat))
+
+	if err != nil {
+		slog.Error("error deleting expired sessions", "error", err)
+	}
+}
