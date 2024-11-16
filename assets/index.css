@@ -95,6 +95,7 @@ td {
         justify-content: end;
 
         .value {
+            line-height: 16px;
             margin-right: -4px;
         }
 
