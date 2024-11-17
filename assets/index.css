@@ -403,6 +403,12 @@ a.dropdown-option {
         font-size: 14px;
         color: var(--gray-400)
     }
+
+    .count {
+        margin-top: 4px;
+        font-size: 24px;
+        font-weight: bold;
+    }
 }
 
 .barchart {

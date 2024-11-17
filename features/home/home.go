@@ -23,6 +23,11 @@ type pageViewsTable struct {
 	Pagination           components.Pagination
 }
 
+type pageViewsChart struct {
+	TotalCount int
+	BarChart   components.BarChart
+}
+
 func HandleHomePage(w http.ResponseWriter, r *http.Request) {
 	hasUsers := users.HasUsers()
 	projects := projects.GetAllProjects()
@@ -54,7 +59,7 @@ func HandleHomePage(w http.ResponseWriter, r *http.Request) {
 func renderHomePage(w http.ResponseWriter, state urlState, projects []projects.ProjectRecord) {
 	type templateData struct {
 		Navbar         components.Navbar
-		PageViewsChart components.BarChart
+		PageViewsChart pageViewsChart
 		PageViewsTable pageViewsTable
 	}
 
@@ -65,9 +70,24 @@ func renderHomePage(w http.ResponseWriter, state urlState, projects []projects.P
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	barChart := components.NewBarChart(pageViewsCount)
 
-	pageviews, err := getPageViewsTable(state)
+	totalCount := 0
+	barChartInputDataPoints := []components.BarChartInputDataPoint{}
+	for _, record := range pageViewsCount {
+		barChartInputDataPoint := components.BarChartInputDataPoint{
+			Label: record.Interval,
+			Data:  record.Count,
+		}
+		barChartInputDataPoints = append(barChartInputDataPoints, barChartInputDataPoint)
+		totalCount = record.TotalCount
+	}
+	barChart := components.NewBarChart(barChartInputDataPoints)
+	chart := pageViewsChart{
+		TotalCount: totalCount,
+		BarChart:   barChart,
+	}
+
+	table, err := getPageViewsTable(state)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -75,8 +95,8 @@ func renderHomePage(w http.ResponseWriter, state urlState, projects []projects.P
 
 	tmplData := templateData{
 		Navbar:         navbar,
-		PageViewsChart: barChart,
-		PageViewsTable: pageviews,
+		PageViewsChart: chart,
+		PageViewsTable: table,
 	}
 
 	templates.Render(w, "home.html", tmplData)

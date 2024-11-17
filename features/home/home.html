@@ -7,7 +7,8 @@
         
         <div class="pageviews-chart-container">
             <div class="title">Page Views</div>
-            {{template "barchart" .PageViewsChart}}
+            <div class="count">{{.PageViewsChart.TotalCount}}</div>
+            {{template "barchart" .PageViewsChart.BarChart}}
         </div>
         
         <div class="section">
