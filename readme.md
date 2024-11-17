@@ -2,7 +2,7 @@
 
 
 Minimal Web Analytics
-<p align="center"><img src="https://raw.githubusercontent.com/sheshbabu/mouji/master/docs/screenshots/home.png" /></p>
+<p align="center"><img src="https://github.com/sheshbabu/mouji/blob/master/docs/screenshots/home.png?raw=true" /></p>
 
 ### Features
 * Track pageviews
