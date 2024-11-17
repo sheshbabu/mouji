@@ -393,9 +393,19 @@ a.dropdown-option {
     }
 }
 
-.barchart {
+.pageviews-chart-container {
     margin-top: 48px;
+    border-radius: 6px;
+    border: 1px solid var(--zinc-200);
+    padding: 12px;
 
+    .title {
+        font-size: 14px;
+        color: var(--gray-400)
+    }
+}
+
+.barchart {
     .tooltip {
         position: absolute;
         display: none;

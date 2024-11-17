@@ -5,7 +5,10 @@
     <body>
         {{template "navbar" .Navbar}}
         
-        {{template "barchart" .PageViewsChart}}
+        <div class="pageviews-chart-container">
+            <div class="title">Page Views</div>
+            {{template "barchart" .PageViewsChart}}
+        </div>
         
         <div class="section">
             {{if gt (len .PageViewsTable.Records) 0}}
