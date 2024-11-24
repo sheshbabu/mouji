@@ -412,6 +412,19 @@ a.dropdown-option {
 }
 
 .barchart {
+    .bar-background {
+        fill: var(--zinc-200);
+        fill-opacity: 0.2;
+    }
+
+    .bar-foreground {
+        fill: var(--gray-900);
+
+        .bar:hover {
+            fill: url(#bar-selected);
+        }
+    }
+
     .tooltip {
         position: absolute;
         display: none;
