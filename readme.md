@@ -17,7 +17,7 @@ Minimal Web Analytics
 ### Philosophy
 I built this application mainly for my own personal use. I also wanted to experiment to see if it's possible to build good software using modern technologies that consumes less resources and pull in as few dependencies as possible.
 
-This is built using Golang and uses SQLite as database. The frontend is built using vanilla HTML and CSS. So far, the only dependencies it uses are [Lato](https://www.latofonts.com) (vendored), [go-sqlite](https://www.github.com/mattn/go-sqlite3) and [crypto](https://pkg.go.dev/golang.org/x/crypto).
+This is built using Golang and uses SQLite as database. The frontend is built using vanilla HTML, CSS and JS. So far, the only dependencies it uses are [Lato](https://www.latofonts.com) (vendored), [go-sqlite](https://www.github.com/mattn/go-sqlite3) and [crypto](https://pkg.go.dev/golang.org/x/crypto).
 
 
 ### Installation
@@ -30,12 +30,18 @@ $ go build
 ### Local Development
 Run the application using default configuration
 ```shell
-$ go run main.go
+$ make dev
 ```
 
 Run the application by customizing PORT and DATA_FOLDER
 ```shell
-$ PORT="4000" DATA_FOLDER="./data" go run main.go
+$ PORT="4000" DATA_FOLDER="./data" make dev
+```
+
+Run the application in watch mode
+Install [air](https://github.com/air-verse/air)
+```shell
+$ make watch
 ```
 
 Run the application using Docker

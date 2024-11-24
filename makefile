@@ -1,6 +1,9 @@
 dev:
 	go run main.go
 
+watch:
+	air
+
 deploy:
 	fly deploy
 
