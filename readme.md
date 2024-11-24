@@ -1,7 +1,9 @@
-# mouji
+<p align="center">
+  <img width="256" src="assets/android-chrome-512x512.png">
+  <h1 align="center">mouji</h1>
+  <p align="center">Minimal Web Analytics</p>
+</p>
 
-
-Minimal Web Analytics
 <p align="center"><img src="https://github.com/sheshbabu/mouji/blob/master/docs/screenshots/home.png?raw=true" /></p>
 
 ### Features
