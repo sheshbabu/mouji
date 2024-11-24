@@ -29,20 +29,26 @@
             const tooltipValue = document.querySelector('.tooltip > .value');
             const bars = document.querySelectorAll('.bar');
 
-            const tooltipHeight = 40;
-            const tooltipWidth = 120;
+            const tooltipHeight = 56;
+            const tooltipWidth = 96;
 
             bars.forEach(bar => {
                 bar.addEventListener('mousemove', (e) => {
                     const label = bar.getAttribute('data-label');
                     const value = bar.getAttribute('data-value');
 
-                    const rect = bar.getBoundingClientRect();
-                    const topY = rect.top + window.scrollY;
+                    const barRect = bar.getBoundingClientRect();
+                    const topY = barRect.top + window.scrollY;
                     
                     tooltip.style.display = 'flex';
-                    tooltip.style.left = `${rect.x + rect.width + 5}px`;
-                    tooltip.style.top = `${topY - tooltipHeight}px`;
+                    let tooltipLeft = barRect.x + (barRect.width / 2) - (tooltipWidth / 2);
+                    if (tooltipLeft + tooltipWidth > window.screenLeft) {
+                        tooltipLeft = barRect.right - tooltipWidth;
+                    } else if (tooltipLeft < 0) {
+                        tooltipLeft = barRect.left;
+                    }
+                    tooltip.style.left = `${tooltipLeft}px`;
+                    tooltip.style.top = `${topY - tooltipHeight - 5}px`;
                     tooltipLabel.textContent = label;
                     tooltipValue.textContent = `${value} views`;
                 });
