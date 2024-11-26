@@ -38,11 +38,11 @@
                     const value = bar.getAttribute('data-value');
 
                     const barRect = bar.getBoundingClientRect();
-                    const topY = barRect.top + window.scrollY;
+                    const topY = barRect.top + window.scrollY; // https://stackoverflow.com/q/41576287
                     
                     tooltip.style.display = 'flex';
                     let tooltipLeft = barRect.x + (barRect.width / 2) - (tooltipWidth / 2);
-                    if (tooltipLeft + tooltipWidth > window.screenLeft) {
+                    if (tooltipLeft + tooltipWidth > window.innerWidth) { // https://o7planning.org/12397/javascript-window
                         tooltipLeft = barRect.right - tooltipWidth;
                     } else if (tooltipLeft < 0) {
                         tooltipLeft = barRect.left;
