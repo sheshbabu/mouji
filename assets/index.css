@@ -430,8 +430,6 @@ a.dropdown-option {
         display: none;
         flex-direction: column;
         align-items: center;
-        height: 40px;
-        width: 84px;
         padding: 8px;
         border-radius: 6px;
         box-shadow: var(--shadow-1);
