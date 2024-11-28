@@ -1,6 +1,7 @@
 package pageviews
 
 import (
+	"database/sql"
 	"fmt"
 	"log/slog"
 	"mouji/commons/components"
@@ -88,25 +89,76 @@ func GetPaginatedPageViews(projectID string, daterange components.DataRangeType,
 
 func GetPageViewCountsByInterval(projectID string, daterange components.DataRangeType) ([]PageViewCountRecord, error) {
 	var records []PageViewCountRecord
+	var rows *sql.Rows
+	var err error
 
-	query := `
-		SELECT
-			STRFTIME(?, received_at) AS interval,
-			COUNT(*) AS count, 
-			SUM(COUNT(*)) OVER() AS total_count
-		FROM
-			pageviews
-		WHERE
-			project_id = ?
-			AND
-			received_at >= DATETIME('now', ?)
-		GROUP BY
-			interval
-		ORDER BY
-			received_at
-	`
-
-	rows, err := sqlite.DB.Query(query, getDateRangeIntervalFormat(daterange), projectID, getDateRangeFilter(daterange))
+	if daterange == "24h" {
+		query := `
+			SELECT
+				-- https://stackoverflow.com/a/33116186
+				STRFTIME('%d ', received_at) || SUBSTR('--JanFebMarAprMayJunJulAugSepOctNovDec', STRFTIME('%m', received_at) * 3, 3) || ', ' ||
+					CASE 
+						WHEN STRFTIME('%H', received_at) = '00' THEN '12 - 01 AM'
+						WHEN STRFTIME('%H', received_at) = '12' THEN '12 - 01 PM'
+						ELSE
+							STRFTIME('%I', received_at) || ' - ' || STRFTIME('%I', DATETIME(received_at, '+1 hour')) || 
+								CASE 
+									WHEN STRFTIME('%p', received_at) = 'AM' AND STRFTIME('%H', received_at) = '11' THEN ' PM'
+									WHEN STRFTIME('%p', received_at) = 'PM' AND STRFTIME('%H', received_at) = '23' THEN ' AM'
+									ELSE STRFTIME(' %p', received_at)
+								END
+					END AS interval,
+				COUNT(*) AS count, 
+				SUM(COUNT(*)) OVER() AS total_count
+			FROM
+				pageviews
+			WHERE
+				project_id = ?
+				AND
+				received_at >= DATETIME('now', '-24 hours')
+			GROUP BY
+				STRFTIME('%Y-%m-%d %H', received_at)
+			ORDER BY
+				STRFTIME('%Y-%m-%d %H', received_at);
+		`
+		rows, err = sqlite.DB.Query(query, projectID)
+	} else if daterange == "1w" || daterange == "1m" || daterange == "3m" {
+		query := `
+			SELECT
+				STRFTIME('%d ', received_at) || SUBSTR('--JanFebMarAprMayJunJulAugSepOctNovDec', STRFTIME('%m', received_at) * 3, 3) AS interval,
+				COUNT(*) AS count, 
+				SUM(COUNT(*)) OVER() AS total_count
+			FROM
+				pageviews
+			WHERE
+				project_id = ?
+				AND
+				received_at >= DATETIME('now', ?)
+			GROUP BY
+				interval
+			ORDER BY
+				received_at
+		`
+		rows, err = sqlite.DB.Query(query, projectID, getDateRangeFilter(daterange))
+	} else {
+		query := `
+			SELECT
+				STRFTIME('%Y ', received_at) || SUBSTR('--JanFebMarAprMayJunJulAugSepOctNovDec', STRFTIME('%m', received_at) * 3, 3) AS interval,
+				COUNT(*) AS count, 
+				SUM(COUNT(*)) OVER() AS total_count
+			FROM
+				pageviews
+			WHERE
+				project_id = ?
+				AND
+				received_at >= DATETIME('now', '-1 years')
+			GROUP BY
+				interval
+			ORDER BY
+				received_at
+		`
+		rows, err = sqlite.DB.Query(query, projectID, getDateRangeFilter(daterange))
+	}
 	if err != nil {
 		err = fmt.Errorf("error retrieving pageview counts: %w", err)
 		slog.Error(err.Error())
@@ -145,21 +197,4 @@ func getDateRangeFilter(daterange components.DataRangeType) string {
 	}
 
 	return "-24 hours"
-}
-
-func getDateRangeIntervalFormat(daterange components.DataRangeType) string {
-	switch daterange {
-	case "24h":
-		return "%Y-%m-%d %H"
-	case "1w":
-		return "%Y-%m-%d"
-	case "1m":
-		return "%Y-%m-%d"
-	case "3m":
-		return "%Y-%m-%d"
-	case "1y":
-		return "%Y-%m"
-	}
-
-	return "%Y-%m-%d %H"
 }
