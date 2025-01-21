@@ -456,7 +456,7 @@ a.dropdown-option {
 /* Lato Regular */
 /* https://medium.com/going-fullstack/self-hosting-web-font-files-6a46bfc36ffd */
 @font-face {
-    font-display: swap;
+    font-display: block;
     font-family: 'Lato';
     font-style: normal;
     font-weight: 400;
@@ -465,7 +465,7 @@ a.dropdown-option {
 
 /* Lato Bold */
 @font-face {
-    font-display: swap;
+    font-display: block;
     font-family: 'Lato';
     font-style: normal;
     font-weight: 700;
