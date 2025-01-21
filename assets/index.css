@@ -230,7 +230,8 @@ td {
     }
 }
 
-button.button-container {
+button.button-container,
+button.dropdown-container {
     display: flex;
     position: relative;
     padding: 0;
@@ -296,11 +297,23 @@ button.button-container {
     }
 }
 
+.dropdown-container {
+    &.open {
+        .dropdown-menu {
+            display: block;
+        }
+
+        .dropdown-button {
+            border-radius: 6px 6px 0 0;
+        }
+    }
+}
+
 .dropdown-button {
     min-width: 160px;
 }
 
-.dropdown {
+.dropdown-menu {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -311,16 +324,6 @@ button.button-container {
     display: none;
     background-color: white;
     z-index: 1;
-}
-
-.button-container:hover {
-    .dropdown-button {
-        border-radius: 6px 6px 0 0;
-    }
-
-    .dropdown {
-        display: block;
-    }
 }
 
 a.dropdown-option {

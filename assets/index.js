@@ -30,3 +30,16 @@ bars.forEach(bar => {
         tooltip.style.display = 'none';
     });
 });
+
+const dropdownButtons = document.querySelector('.dropdown-button');
+
+dropdownButtons.addEventListener('click', (e) => {
+    const dropdown = e.target.parentElement;
+    dropdown.classList.toggle('open');
+    e.stopPropagation();
+});
+
+document.addEventListener('click', (e) => {
+    const dropdowns = document.querySelectorAll('.dropdown-container');
+    dropdowns.forEach(el => el.classList.remove('open'));
+});
