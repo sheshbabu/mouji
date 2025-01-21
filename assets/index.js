@@ -31,15 +31,22 @@ bars.forEach(bar => {
     });
 });
 
-const dropdownButtons = document.querySelector('.dropdown-button');
-
-dropdownButtons.addEventListener('click', (e) => {
-    const dropdown = e.target.parentElement;
-    dropdown.classList.toggle('open');
-    e.stopPropagation();
+const dropdownButtons = document.querySelectorAll('.dropdown-button');
+dropdownButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+        const dropdown = e.target.closest('.dropdown-container');
+        if (dropdown) {
+            dropdown.classList.toggle('open');
+            e.stopPropagation();
+        }
+    });
 });
 
 document.addEventListener('click', (e) => {
-    const dropdowns = document.querySelectorAll('.dropdown-container');
+    if (e.target.closest('.dropdown-container')) {
+        return
+    }
+
+    const dropdowns = document.querySelectorAll('.dropdown-container.open');
     dropdowns.forEach(el => el.classList.remove('open'));
 });
