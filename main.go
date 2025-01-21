@@ -1,13 +1,12 @@
 package main
 
 import (
-	"time"
 	"embed"
 	"log/slog"
 	"mouji/commons/auth"
+	"mouji/commons/session"
 	"mouji/commons/sqlite"
 	"mouji/commons/templates"
-	"mouji/commons/session"
 	"mouji/features/home"
 	"mouji/features/login"
 	"mouji/features/pageviews"
@@ -16,6 +15,8 @@ import (
 	"mouji/features/users"
 	"net/http"
 	"os"
+	"strings"
+	"time"
 )
 
 //go:embed all:commons all:features
@@ -61,7 +62,7 @@ func newRouter() *http.ServeMux {
 	mux := http.NewServeMux()
 
 	// public
-	mux.Handle("GET /assets/", http.FileServer(http.FS(assets)))
+	mux.HandleFunc("GET /assets/", handleStaticAssets)
 	mux.HandleFunc("GET /collect", pageviews.HandleCollect)
 	mux.HandleFunc("GET /login", login.HandleLoginPage)
 	mux.HandleFunc("POST /login", login.HandleLoginSubmit)
@@ -77,6 +78,14 @@ func newRouter() *http.ServeMux {
 	addPrivateRoute(mux, "POST /projects/{project_id}", projects.HandleProjectDetailSubmit)
 
 	return mux
+}
+
+func handleStaticAssets(w http.ResponseWriter, r *http.Request) {
+	if strings.HasSuffix(r.URL.Path, ".woff2") {
+		w.Header().Set("Cache-Control", "public, max-age=31536000") // 1 year
+	}
+
+	http.FileServer(http.FS(assets)).ServeHTTP(w, r)
 }
 
 func addPrivateRoute(mux *http.ServeMux, pattern string, handlerFunc func(w http.ResponseWriter, r *http.Request)) {
