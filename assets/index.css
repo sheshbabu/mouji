@@ -83,10 +83,15 @@ td {
     text-align: left;
     vertical-align: text-top;
 
-    .path {
-        font-size: 12px;
-        margin-top: 4px;
-        color: var(--gray-400);
+    &.text {
+        padding-right: 8px;
+        line-height: 1.5;
+
+        .path {
+            font-size: 12px;
+            margin-top: 4px;
+            color: var(--gray-400);
+        }
     }
 
     &.metrics {
