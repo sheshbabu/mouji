@@ -204,7 +204,7 @@ td {
 }
 
 .input-container {
-    margin-top: 28px;
+    margin-top: 24px;
 
     input,
     textarea {
@@ -214,7 +214,7 @@ td {
         border-top: none;
         border-bottom: 1px solid var(--zinc-200);
         padding: 8px;
-        margin-top: 12px;
+        margin-top: 8px;
         min-width: 320px;
         box-shadow: var(--shadow-0);
 
