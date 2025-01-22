@@ -7,10 +7,11 @@
  */
 
 :root {
-    /* tailwind colors */
+    /* https://tailwindcss.com/docs/customizing-colors */
+    --neutral-900: #171717;
+    --neutral-400: #a3a3a3;
     --gray-900: #111827;
     --gray-700: #374151;
-    --gray-400: #9ca3af;
     --zinc-200: #E4E4E7;
     --zinc-100: #f4f4f5;
     --red-600: #DC2626;
@@ -27,6 +28,13 @@
     --p1: normal 1rem/1.4     var(--font-family);
     --sm: normal 0.889rem/1.4 var(--font-family); /* 1rem / var(--font-scale) */
 
+    /* spacing */
+    /* https://medium.com/dwarves-design/the-principle-of-spacing-in-ui-design-part-1-3354d0d65e51 */
+    --spacing-xs: 6px;
+    --spacing-sm: 12px;
+    --spacing-md: 24px;
+    --spacing-lg: 48px;
+
     /* elevation */
     --shadow-0: inset 0 1px 2px rgba(0, 0, 0, .39), 0 -1px 1px #FFF, 0 1px 0 #FFF; /* https://gist.github.com/nrrrdcore/3309046 */
     --shadow-1: rgba(0, 0, 0, 0.01) 0px 1px 3px 0px, rgba(0, 0, 0, 0.10) 0px 1px 3px 0px;
@@ -35,11 +43,19 @@
 
 html {
     font-size: 16px; /* 1rem */
+    box-sizing: border-box;
 }
 
 * {
     font: var(--p1);
-    color: var(--gray-900);
+    color: var(--neutral-900);
+}
+
+/* https://css-tricks.com/box-sizing/#aa-universal-box-sizing-with-inheritance */
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
 }
 
 body {
@@ -50,11 +66,9 @@ body {
 
 @media screen and (max-width: 948px) {
     body {
-        margin-top: 24px;
-        /* https://stackoverflow.com/a/2711132 */
-        -webkit-text-size-adjust: 100%;
-        /* https: //webkit.org/blog/7929/designing-websites-for-iphone-x/ */
-        margin-bottom: max(24px, env(safe-area-inset-bottom));
+        margin-top: var(--spacing-md);
+        -webkit-text-size-adjust: 100%; /* https://stackoverflow.com/a/2711132 */
+        margin-bottom: max(24px, env(safe-area-inset-bottom)); /* https://webkit.org/blog/7929/designing-websites-for-iphone-x */
         margin-left: max(24px, env(safe-area-inset-left));
         margin-right: max(24px, env(safe-area-inset-right));
     }
@@ -62,30 +76,30 @@ body {
 
 .h-space-12 {
     display: inline;
-    margin-left: 12px;
+    margin-left: var(--spacing-sm);
 }
 
 .v-space-12 {
-    margin-top: 12px;
+    margin-top: var(--spacing-sm);
 }
 
 .v-space-24 {
-    margin-top: 24px;
+    margin-top: var(--spacing-md);
 }
 
 svg.icon {
-    width: 16px;
-    height: 16px;
+    width: 34px;
+    height: 34px;
     padding: 9px;
 
     path {
-        stroke: var(--gray-900);
+        stroke: var(--neutral-900);
         stroke-width: 1.5;
     }
 }
 
 table {
-    margin-top: 12px;
+    margin-top: var(--spacing-sm);
     width: 100%;
     border-collapse: collapse;
     border-radius: 6px;
@@ -114,7 +128,7 @@ td {
         .path {
             font: var(--sm);
             margin-top: 4px;
-            color: var(--gray-400);
+            color: var(--neutral-400);
         }
     }
 
@@ -129,9 +143,11 @@ td {
 
         svg {
             padding-right: 0;
+            padding-left: 0;
+            margin-right: -9px;
 
             path {
-                stroke: var(--gray-400);
+                stroke: var(--neutral-400);
                 stroke-width: 1.5;
             }
         }
@@ -189,38 +205,39 @@ td {
 
     .subtitle {
         margin-top: 4px;
-        color: var(--gray-400);
+        color: var(--neutral-400);
     }
 
     .empty {
-        margin-top: 12px;
+        margin-top: var(--spacing-sm);
     }
 }
 
 @media screen and (max-width: 750px) {
     .section {
-        margin-top: 48px;
+        margin-top: var(--spacing-lg);
     }
 }
 
 .input-container {
-    margin-top: 24px;
+    margin-top: var(--spacing-md);
 
     input,
     textarea {
-        height: 28px;
+        height: 44px;
         border-radius: 6px;
         border: 1px solid transparent;
+        margin-left: -1px; /* To fix the transparent border */
         border-top: none;
         border-bottom: 1px solid var(--zinc-200);
         padding: 8px;
-        margin-top: 8px;
+        margin-top: var(--spacing-xs);
         min-width: 320px;
         box-shadow: var(--shadow-0);
 
         &.error {
             border: 1px solid var(--red-600);
-            color: var(--gray-900);
+            color: var(--neutral-900);
             box-shadow: none;
         }
     }
@@ -232,16 +249,15 @@ td {
         font-family: monospace;
         resize: none;
         tab-size: 4;
+        field-sizing: content; /* https://developer.mozilla.org/en-US/docs/Web/CSS/field-sizing#browser_compatibility */
     }
 
     .hint {
-        margin-top: 4px;
-        color: var(--gray-400);
+        color: var(--neutral-400);
         font: var(--sm);
     }
 
     .error {
-        margin-top: 8px;
         color: var(--red-600);
         font: var(--sm);
     }
@@ -261,7 +277,7 @@ button.dropdown-container {
 .dropdown-button,
 .daterange {
     display: flex;
-    height: 34px;
+    height: 36px;
     align-items: center;
     justify-content: space-between;
     padding: 0 12px;
@@ -282,7 +298,7 @@ button.dropdown-container {
     }
 
     &.primary {
-        background-color: var(--gray-900);
+        background-color: var(--neutral-900);
         color: white;
 
         svg.icon {
@@ -358,7 +374,7 @@ a.dropdown-option {
 .pagination-container {
     display: flex;
     flex-direction: row-reverse;
-    margin-top: 12px;
+    margin-top: var(--spacing-sm);
 }
 
 .pagination {
@@ -383,7 +399,7 @@ a.dropdown-option {
 
         svg.icon {
             path {
-                stroke: var(--gray-400);
+                stroke: var(--neutral-400);
             }
         }
     }
@@ -399,7 +415,7 @@ a.dropdown-option {
         transition-property: background-color;
         transition-duration: 500ms;
         text-decoration: none;
-        height: 16px;
+        height: 28px;
         padding: 6px 12px;
         margin: 4px;
     }
@@ -417,14 +433,14 @@ a.dropdown-option {
 }
 
 .pageviews-chart-container {
-    margin-top: 48px;
+    margin-top: var(--spacing-lg);
     border-radius: 6px;
     border: 1px solid var(--zinc-200);
     padding: 12px;
 
     .title {
         font: var(--sm);
-        color: var(--gray-400)
+        color: var(--neutral-400)
     }
 
     .count {
@@ -455,11 +471,11 @@ a.dropdown-option {
         padding: 8px;
         border-radius: 6px;
         box-shadow: var(--shadow-1);
-        background: var(--gray-900);
+        background: var(--neutral-900);
 
         .label {
             font: var(--sm);
-            color: var(--gray-400);
+            color: var(--neutral-400);
         }
 
         .value {
