@@ -58,7 +58,7 @@ func HandleNewUserSubmit(w http.ResponseWriter, r *http.Request) {
 	// If there are no users, then the first user becomes an admin
 	isAdmin := !hasUsers
 
-	err = InsertUser(email, passwordHash, isAdmin)
+	user, err := InsertUser(email, passwordHash, isAdmin)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -66,7 +66,7 @@ func HandleNewUserSubmit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !hasUsers {
-		sess, err := session.NewSession()
+		sess, err := session.NewSession(user.UserID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
