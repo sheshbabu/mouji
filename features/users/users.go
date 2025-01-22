@@ -11,16 +11,17 @@ import (
 )
 
 func HandleNewUserPage(w http.ResponseWriter, r *http.Request) {
-	hasUsers := HasUsers()
+	isOnboarding := r.URL.Query().Get("is_onboarding") == "true"
 
 	email := ""
 	emailError := ""
 	passwordError := ""
 
-	renderNewUserPage(w, hasUsers, email, emailError, passwordError)
+	renderNewUserPage(w, isOnboarding, email, emailError, passwordError)
 }
 
 func HandleNewUserSubmit(w http.ResponseWriter, r *http.Request) {
+	isOnboarding := r.URL.Query().Get("is_onboarding") == "true"
 	hasUsers := HasUsers()
 
 	err := r.ParseForm()
@@ -44,7 +45,7 @@ func HandleNewUserSubmit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if emailError != "" || passwordError != "" {
-		renderNewUserPage(w, hasUsers, email, emailError, passwordError)
+		renderNewUserPage(w, isOnboarding, email, emailError, passwordError)
 		return
 	}
 
@@ -72,30 +73,33 @@ func HandleNewUserSubmit(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		session.SetSessionCookie(w, sess)
+
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/settings", http.StatusSeeOther)
 }
 
-func renderNewUserPage(w http.ResponseWriter, hasUsers bool, email string, emailError string, passwordError string) {
+func renderNewUserPage(w http.ResponseWriter, isOnboarding bool, email string, emailError string, passwordError string) {
 	type templateData struct {
 		Navbar        components.Navbar
-		HasUsers      bool
+		IsOnboarding  bool
 		EmailInput    components.Input
 		PasswordInput components.Input
 		SubmitButton  components.Button
 	}
 
-	submitButtonText := "Create"
-	submitButtonIcon := ""
-	if !hasUsers {
-		submitButtonText = "Continue"
-		submitButtonIcon = "arrow-right"
+	submitButtonText := "Continue"
+	submitButtonIcon := "arrow-right"
+	if isOnboarding {
+		submitButtonText = "Create"
+		submitButtonIcon = ""
 	}
 
 	tmplData := templateData{
-		Navbar:   components.NewNavbar(false),
-		HasUsers: hasUsers,
+		Navbar:       components.NewNavbar(false),
+		IsOnboarding: isOnboarding,
 		EmailInput: components.Input{
 			ID:          "email",
 			Label:       "Email",

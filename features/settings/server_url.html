@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+    {{template "head" "Server URL"}}
+
+    <body>
+        {{template "navbar" .Navbar}}
+
+        <div class="section">
+            <div class="title">Configure your server details</div>
+            <form {{if eq .IsOnboarding true}}action="/settings/server_url?is_onboarding=true" {{else}}action="/settings/server_url" {{end}} method="post">
+                {{template "input" .ServerURLInput}}
+                <div class="v-space-24"></div>
+                {{template "button" .SubmitButton}}
+            </form>
+        </div>
+    </body>
+
+</html>

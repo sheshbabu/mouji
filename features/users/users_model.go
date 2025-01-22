@@ -9,6 +9,7 @@ import (
 )
 
 type UserRecord struct {
+	UserID   string
 	Email    string
 	Password string
 }
@@ -33,10 +34,10 @@ func HasUsers() bool {
 func GetUserByEmail(email string) (UserRecord, error) {
 	var user UserRecord
 
-	query := "SELECT email, password_hash FROM users where email = ?"
+	query := "SELECT user_id, email, password_hash FROM users where email = ?"
 
 	row := sqlite.DB.QueryRow(query, email)
-	err := row.Scan(&user.Email, &user.Password)
+	err := row.Scan(&user.UserID, &user.Email, &user.Password)
 	if err != nil {
 		err = fmt.Errorf("error retrieving user: %w", err)
 		slog.Error(err.Error())
@@ -46,12 +47,45 @@ func GetUserByEmail(email string) (UserRecord, error) {
 	return user, nil
 }
 
-func InsertUser(email string, passwordHash string, isAdmin bool) error {
-	query := "INSERT INTO users (email, password_hash, is_admin) VALUES (?, ?, ?);"
+func GetUserByID(userID string) (UserRecord, error) {
+	var user UserRecord
 
-	_, err := sqlite.DB.Exec(query, email, passwordHash, isAdmin)
+	query := "SELECT user_id, email, password_hash FROM users where user_id = ?"
+
+	row := sqlite.DB.QueryRow(query, userID)
+	err := row.Scan(&user.UserID, &user.Email, &user.Password)
+	if err != nil {
+		err = fmt.Errorf("error retrieving user: %w", err)
+		slog.Error(err.Error())
+		return user, err
+	}
+
+	return user, nil
+}
+
+func InsertUser(email string, passwordHash string, isAdmin bool) (UserRecord, error) {
+	var user UserRecord
+
+	query := "INSERT INTO users (email, password_hash, is_admin) VALUES (?, ?, ?) RETURNING user_id, email, password_hash"
+
+	row := sqlite.DB.QueryRow(query, email, passwordHash, isAdmin)
+	err := row.Scan(&user.UserID, &user.Email, &user.Password)
+
 	if err != nil {
 		err = fmt.Errorf("error inserting user: %w", err)
+		slog.Error(err.Error())
+		return user, err
+	}
+
+	return user, nil
+}
+
+func UpdatePassword(userID, passwordHash string) error {
+	query := "UPDATE users SET password_hash = ? WHERE user_id = ?"
+
+	_, err := sqlite.DB.Exec(query, passwordHash, userID)
+	if err != nil {
+		err = fmt.Errorf("error updating password: %w", err)
 		slog.Error(err.Error())
 		return err
 	}

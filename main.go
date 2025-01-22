@@ -70,8 +70,12 @@ func newRouter() *http.ServeMux {
 	// private
 	addPrivateRoute(mux, "GET /", home.HandleHomePage)
 	addPrivateRoute(mux, "GET /settings", settings.HandleSettingsPage)
+	addPrivateRoute(mux, "GET /settings/server_url", settings.HandleServerURLPage)
+	addPrivateRoute(mux, "POST /settings/server_url", settings.HandleServerURLSubmit)
 	addPrivateRoute(mux, "GET /users/new", users.HandleNewUserPage)
 	addPrivateRoute(mux, "POST /users/new", users.HandleNewUserSubmit)
+	addPrivateRoute(mux, "GET /users/me/password", users.HandleChangePasswordPage)
+	addPrivateRoute(mux, "POST /users/me/password", users.HandleChangePasswordSubmit)
 	addPrivateRoute(mux, "GET /projects/new", projects.HandleNewProjectPage)
 	addPrivateRoute(mux, "GET /projects/{project_id}", projects.HandleEditProjectPage)
 	addPrivateRoute(mux, "POST /projects/", projects.HandleProjectDetailSubmit)

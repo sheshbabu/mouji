@@ -3,6 +3,7 @@ package home
 import (
 	"fmt"
 	"mouji/commons/components"
+	"mouji/commons/config"
 	"mouji/commons/templates"
 	"mouji/features/pageviews"
 	"mouji/features/projects"
@@ -30,15 +31,24 @@ type pageViewsChart struct {
 
 func HandleHomePage(w http.ResponseWriter, r *http.Request) {
 	hasUsers := users.HasUsers()
-	projects := projects.GetAllProjects()
-
 	if !hasUsers {
-		http.Redirect(w, r, "/users/new", http.StatusSeeOther)
+		http.Redirect(w, r, "/users/new?is_onboarding=true", http.StatusSeeOther)
 		return
 	}
 
+	server_url, err := config.GetConfig("server_url")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if server_url == "" {
+		http.Redirect(w, r, "/settings/server_url?is_onboarding=true", http.StatusSeeOther)
+		return
+	}
+
+	projects := projects.GetAllProjects()
 	if len(projects) == 0 {
-		http.Redirect(w, r, "/projects/new", http.StatusSeeOther)
+		http.Redirect(w, r, "/projects/new?is_onboarding=true", http.StatusSeeOther)
 		return
 	}
 

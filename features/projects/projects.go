@@ -3,6 +3,7 @@ package projects
 import (
 	"fmt"
 	"mouji/commons/components"
+	"mouji/commons/config"
 	"mouji/commons/templates"
 	"net/http"
 	"net/url"
@@ -10,35 +11,49 @@ import (
 )
 
 func HandleNewProjectPage(w http.ResponseWriter, r *http.Request) {
+	isOnboarding := r.URL.Query().Get("is_onboarding") == "true"
 	isNewProject := true
 
 	projectID := ""
 	projectName := ""
-	serverBaseURL := ""
+	siteBaseURL := ""
 	projectNameError := ""
-	serverBaseURLError := ""
+	siteBaseURLError := ""
 
-	renderProjectDetailPage(w, isNewProject, projectID, projectName, serverBaseURL, projectNameError, serverBaseURLError)
+	serverURL, err := config.GetConfig("server_url")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	renderProjectDetailPage(w, isOnboarding, isNewProject, projectID, projectName, siteBaseURL, serverURL, projectNameError, siteBaseURLError)
 }
 
 func HandleEditProjectPage(w http.ResponseWriter, r *http.Request) {
+	isOnboarding := false
 	isNewProject := false
 
 	projectID := r.PathValue("project_id")
 	project, err := getProjectByID(projectID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
+	serverURL, err := config.GetConfig("server_url")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	projectNameError := ""
-	serverBaseURLError := ""
+	siteBaseURLError := ""
 
-	renderProjectDetailPage(w, isNewProject, project.ProjectID, project.Name, project.BaseURL, projectNameError, serverBaseURLError)
+	renderProjectDetailPage(w, isOnboarding, isNewProject, project.ProjectID, project.Name, project.BaseURL, serverURL, projectNameError, siteBaseURLError)
 }
 
 func HandleProjectDetailSubmit(w http.ResponseWriter, r *http.Request) {
+	isOnboarding := r.URL.Query().Get("is_onboarding") == "true"
 	projectID := r.PathValue("project_id")
 	isNewProject := projectID == "new"
 
@@ -50,28 +65,34 @@ func HandleProjectDetailSubmit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	projectName := r.Form.Get("name")
-	serverBaseURL := r.Form.Get("base_url")
+	siteBaseURL := r.Form.Get("base_url")
 	projectNameError := ""
-	serverBaseURLError := ""
+	siteBaseURLError := ""
+
+	serverURL, err := config.GetConfig("server_url")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	if !isValidProjectName(projectName) {
 		projectNameError = "Project name should not be empty"
 	}
 
-	if !isValidServerBaseURL(serverBaseURL) {
-		serverBaseURLError = "Please enter a valid Base URL"
+	if !isValidURL(siteBaseURL) {
+		siteBaseURLError = "Please enter a valid URL"
 	}
 
-	if projectNameError != "" || serverBaseURLError != "" {
-		renderProjectDetailPage(w, isNewProject, projectID, projectName, serverBaseURL, projectNameError, serverBaseURLError)
+	if projectNameError != "" || siteBaseURLError != "" {
+		renderProjectDetailPage(w, isOnboarding, isNewProject, projectID, projectName, siteBaseURL, serverURL, projectNameError, siteBaseURLError)
 		return
 	}
 
 	var project ProjectRecord
 	if isNewProject {
-		project, err = InsertProject(projectName, serverBaseURL)
+		project, err = InsertProject(projectName, siteBaseURL)
 	} else {
-		project, err = updateProject(projectID, projectName, serverBaseURL)
+		project, err = updateProject(projectID, projectName, siteBaseURL)
 	}
 
 	if err != nil {
@@ -79,17 +100,23 @@ func HandleProjectDetailSubmit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if isOnboarding {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
 	projectDetailURL := fmt.Sprintf("/projects/%s", project.ProjectID)
 	http.Redirect(w, r, projectDetailURL, http.StatusSeeOther)
 }
 
-func renderProjectDetailPage(w http.ResponseWriter, isNewProject bool, projectID string, projectName string, serverBaseURL string, projectNameError string, serverBaseURLError string) {
+func renderProjectDetailPage(w http.ResponseWriter, isOnboarding bool, isNewProject bool, projectID string, projectName string, siteBaseURL string, serverURL string, projectNameError string, siteBaseURLError string) {
 	type templateData struct {
 		Navbar               components.Navbar
+		IsOnboarding         bool
 		IsNewProject         bool
 		ProjectID            string
 		ProjectNameInput     components.Input
-		BaseURLInput         components.Input
+		SiteURLInput         components.Input
 		TrackingSnippetInput components.TextArea
 		SubmitButton         components.Button
 	}
@@ -98,11 +125,12 @@ func renderProjectDetailPage(w http.ResponseWriter, isNewProject bool, projectID
 	submitButtonText := "Create"
 	if !isNewProject {
 		submitButtonText = "Update"
-		trackingSnippet = getTrackingSnippet(serverBaseURL, projectID)
+		trackingSnippet = getTrackingSnippet(serverURL, projectID)
 	}
 
 	tmplData := templateData{
 		Navbar:       components.NewNavbar(false),
+		IsOnboarding: isOnboarding,
 		IsNewProject: isNewProject,
 		ProjectID:    projectID,
 		ProjectNameInput: components.Input{
@@ -113,20 +141,20 @@ func renderProjectDetailPage(w http.ResponseWriter, isNewProject bool, projectID
 			Error:       projectNameError,
 			Value:       projectName,
 		},
-		BaseURLInput: components.Input{
+		SiteURLInput: components.Input{
 			ID:          "base_url",
-			Label:       "Base URL",
+			Label:       "Site URL",
 			Type:        "url",
-			Placeholder: "Example: https://www.myserver.com",
-			Error:       serverBaseURLError,
-			Value:       serverBaseURL,
-			Hint:        "Enter the Base URL of the server to correctly generate your tracking snippet",
+			Placeholder: "Example: https://www.blogpost.com",
+			Error:       siteBaseURLError,
+			Value:       siteBaseURL,
+			Hint:        "Enter the base URL of the site associated with this project",
 		},
 		TrackingSnippetInput: components.TextArea{
 			ID:         "tracking_snippet",
 			Label:      "Tracking Snippet",
 			Content:    trackingSnippet,
-			Hint:       "Copy paste this tracking snippet in your HTML file at the end of head tag",
+			Hint:       "Copy paste this tracking snippet in your site's HTML file at the end of head tag",
 			IsDisabled: true,
 		},
 		SubmitButton: components.Button{
@@ -143,12 +171,12 @@ func isValidProjectName(projectName string) bool {
 	return len(strings.TrimSpace(projectName)) > 0
 }
 
-func isValidServerBaseURL(serverBaseURL string) bool {
-	_, err := url.ParseRequestURI(serverBaseURL)
+func isValidURL(siteBaseURL string) bool {
+	_, err := url.ParseRequestURI(siteBaseURL)
 	return err == nil
 }
 
-func getTrackingSnippet(serverBaseURL string, projectID string) string {
+func getTrackingSnippet(serverURL string, projectID string) string {
 	var snippet = `
 <!-- mouji snippet -->
 <script>
@@ -185,5 +213,5 @@ func getTrackingSnippet(serverBaseURL string, projectID string) string {
 </script>
 `
 	snippet = strings.TrimSpace(snippet)
-	return fmt.Sprintf(snippet, serverBaseURL, projectID)
+	return fmt.Sprintf(snippet, serverURL, projectID)
 }
