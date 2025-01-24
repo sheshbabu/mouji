@@ -39,12 +39,18 @@ function initBarChart() {
 }
 
 function initDropdown() {
-    const dropdownButtons = document.querySelectorAll('.dropdown-button');
-    dropdownButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-            const dropdown = e.target.closest('.dropdown-container');
-            dropdown.classList.toggle('open');
-            e.stopPropagation();
+    const dropdowns = document.querySelectorAll('.dropdown-container');
+    dropdowns.forEach(el => {
+        el.addEventListener('click', (e) => {
+            if (e.target.closest('.dropdown-button')) {
+                e.preventDefault(); // Prevent form submission
+                el.classList.add('open');
+            } else if (e.target.closest('span.dropdown-option')) {
+                e.preventDefault(); // Prevent form submission
+                el.querySelector("#dropdown-hidden-input").value = e.target.dataset.value;
+                el.querySelector(".dropdown-selected-option").textContent = e.target.dataset.name;
+                el.classList.remove('open');
+            }
         });
     });
 }

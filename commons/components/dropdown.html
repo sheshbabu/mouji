@@ -1,7 +1,7 @@
 {{define "dropdown"}}
     <button class="dropdown-container">
         <div class="dropdown-button">
-            {{.SelectedOption.Name}}
+            <span class="dropdown-selected-option">{{.SelectedOption.Name}}</span>
             <a>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="icon">
@@ -12,8 +12,15 @@
         </div>
         <ul class="dropdown-menu">
             {{range .AllOptions}}
-            <li><a class="dropdown-option" href="{{.Link}}">{{.Name}}</a></li>
+                <li>
+                    {{if .Link}}
+                        <a class="dropdown-option" href="{{.Link}}">{{.Name}}</a>
+                    {{else}}
+                        <span class="dropdown-option" data-value="{{.Value}}" data-name="{{.Name}}">{{.Name}}</a>
+                    {{end}}
+                </li>
             {{end}}
         </ul>
+        <input type="hidden" id="dropdown-hidden-input" name="{{.InputName}}" value="{{.SelectedOption.Value}}">
     </button>
 {{end}}

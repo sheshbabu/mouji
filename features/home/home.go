@@ -120,6 +120,7 @@ func getNavbar(state urlState, projects []projects.ProjectRecord) components.Nav
 		var option components.DropdownOption
 		option.Name = project.Name
 		option.Link = fmt.Sprintf("/?project_id=%s&daterange=%s", project.ProjectID, state.selectedDateRange)
+		option.Value = ""
 		allOptions = append(allOptions, option)
 		if project.ProjectID == state.selectedProjectID {
 			selectedOption = option
@@ -130,6 +131,7 @@ func getNavbar(state urlState, projects []projects.ProjectRecord) components.Nav
 	}
 	navbar.ProjectsDropdown.SelectedOption = selectedOption
 	navbar.ProjectsDropdown.AllOptions = allOptions
+	navbar.ProjectsDropdown.InputName = ""
 
 	navbar.DateRange = getDateRange(state)
 

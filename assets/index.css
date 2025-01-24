@@ -79,6 +79,10 @@ body {
     margin-left: var(--spacing-sm);
 }
 
+.v-space-6 {
+    margin-top: var(--spacing-xs);
+}
+
 .v-space-12 {
     margin-top: var(--spacing-sm);
 }
@@ -252,15 +256,15 @@ td {
         field-sizing: content; /* https://developer.mozilla.org/en-US/docs/Web/CSS/field-sizing#browser_compatibility */
     }
 
-    .hint {
-        color: var(--neutral-400);
-        font: var(--sm);
-    }
-
     .error {
         color: var(--red-600);
         font: var(--sm);
     }
+}
+
+.hint {
+    color: var(--neutral-400);
+    font: var(--sm);
 }
 
 button.button-container,
@@ -356,9 +360,11 @@ button.dropdown-container {
     display: none;
     background-color: white;
     z-index: 1;
+    max-height: 198px; /* 5.5 items * 36px of option height */
+    overflow: scroll;
 }
 
-a.dropdown-option {
+.dropdown-option {
     text-decoration: none;
     padding-left: 12px;
     height: 36px;
