@@ -1,38 +1,39 @@
 package pageviews
 
 import (
+	"crypto/sha256"
+	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
-type PageViewPayload struct {
-	ProjectID string `json:"project_id"`
-	Url       string `json:"url"`
-	Title     string `json:"title"`
-	Referrer  string `json:"referrer"`
-}
-
 func HandleCollect(w http.ResponseWriter, r *http.Request) {
-	var payload PageViewPayload
 	var record PageViewRecord
 
-	payload.ProjectID = r.URL.Query().Get("project_id")
-	payload.Url = r.URL.Query().Get("path")
-	payload.Title = r.URL.Query().Get("title")
-	payload.Referrer = r.URL.Query().Get("referrer")
+	projectID := r.URL.Query().Get("project_id")
+	path := r.URL.Query().Get("path")
+	title := r.URL.Query().Get("title")
+	referrer := r.URL.Query().Get("referrer")
+	userAgent := r.Header.Get("User-Agent")
+	ipAddress := r.RemoteAddr
 
-	normalizedPath, err := normalizePath(payload.Url)
+	visitorHash := generateVisitorHash(projectID, ipAddress, userAgent)
+
+	normalizedPath, err := normalizePath(path)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	record = PageViewRecord{
-		ProjectID: payload.ProjectID,
-		Path:      normalizedPath,
-		Title:     payload.Title,
-		Referrer:  payload.Referrer,
+		ProjectID:   projectID,
+		Path:        normalizedPath,
+		Title:       title,
+		Referrer:    referrer,
+		VisitorHash: visitorHash,
+		UserAgent:   userAgent,
 	}
 
 	err = InsertPageView(record)
@@ -59,4 +60,19 @@ func normalizePath(rawURL string) (string, error) {
 	}
 
 	return normalizedPath, nil
+}
+
+// Generates a transient visitor hash that rotates daily
+// hash(daily_salt + website_domain + ip_address + user_agent)
+// https://news.ycombinator.com/item?id=24696768
+func generateVisitorHash(projectID string, ipAddress string, userAgent string) string {
+
+	dailySalt := time.Now().Format("2006-01-02")
+
+	// https://gobyexample.com/sha256-hashes
+	hash := sha256.New()
+	hash.Write([]byte(dailySalt + projectID + ipAddress + userAgent))
+	visitorHash := fmt.Sprintf("%x", hash.Sum(nil))
+
+	return visitorHash
 }

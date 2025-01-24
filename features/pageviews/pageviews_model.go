@@ -10,10 +10,12 @@ import (
 )
 
 type PageViewRecord struct {
-	ProjectID string `json:"project_id"`
-	Path      string `json:"url"`
-	Title     string `json:"title"`
-	Referrer  string `json:"referrer"`
+	ProjectID   string
+	Path        string
+	Title       string
+	Referrer    string
+	VisitorHash string
+	UserAgent   string
 }
 
 type PaginatedPageViewRecord struct {
@@ -30,9 +32,9 @@ type PageViewCountRecord struct {
 }
 
 func InsertPageView(record PageViewRecord) error {
-	query := "INSERT INTO pageviews (project_id, path, title, referrer) VALUES (?, ?, ?, ?);"
+	query := "INSERT INTO pageviews (project_id, path, title, referrer, visitor_hash, user_agent) VALUES (?, ?, ?, ?, ?, ?);"
 
-	_, err := sqlite.DB.Exec(query, record.ProjectID, record.Path, record.Title, record.Referrer)
+	_, err := sqlite.DB.Exec(query, record.ProjectID, record.Path, record.Title, record.Referrer, record.VisitorHash, record.UserAgent)
 	if err != nil {
 		err = fmt.Errorf("error inserting pageview: %w", err)
 		slog.Error(err.Error())
