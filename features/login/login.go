@@ -52,7 +52,7 @@ func HandleLoginSubmit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sess, err := session.NewSession()
+	sess, err := session.NewSession(user.UserID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

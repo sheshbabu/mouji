@@ -4,14 +4,18 @@ import (
 	"embed"
 	"log/slog"
 	"mouji/commons/auth"
+	"mouji/commons/session"
 	"mouji/commons/sqlite"
 	"mouji/commons/templates"
 	"mouji/features/home"
 	"mouji/features/login"
 	"mouji/features/projects"
 	"mouji/features/settings"
+	"mouji/features/users"
 	"net/http"
 	"os"
+	"strings"
+	"time"
 )
 
 //go:embed all:commons all:features
@@ -42,6 +46,8 @@ func main() {
 
 	templates.NewTemplates(resources)
 
+	go runBackgroundTasks()
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -59,7 +65,7 @@ func newRouter() *http.ServeMux {
 	mux := http.NewServeMux()
 
 	// public
-	mux.Handle("GET /assets/", http.FileServer(http.FS(assets)))
+	mux.HandleFunc("GET /assets/", handleStaticAssets)
 	// mux.HandleFunc("GET /collect", pageviews.HandleCollect)
 	mux.HandleFunc("GET /login", login.HandleLoginPage)
 	mux.HandleFunc("POST /login", login.HandleLoginSubmit)
@@ -67,8 +73,12 @@ func newRouter() *http.ServeMux {
 	// private
 	addPrivateRoute(mux, "GET /", home.HandleHomePage)
 	addPrivateRoute(mux, "GET /settings", settings.HandleSettingsPage)
+	addPrivateRoute(mux, "GET /settings/server_url", settings.HandleServerURLPage)
+	// addPrivateRoute(mux, "POST /settings/server_url", settings.HandleServerURLSubmit)
 	// addPrivateRoute(mux, "GET /users/new", users.HandleNewUserPage)
 	// addPrivateRoute(mux, "POST /users/new", users.HandleNewUserSubmit)
+	addPrivateRoute(mux, "GET /users/me/password", users.HandleChangePasswordPage)
+	// addPrivateRoute(mux, "POST /users/me/password", users.HandleChangePasswordSubmit)
 	addPrivateRoute(mux, "GET /projects/new", projects.HandleNewProjectPage)
 	addPrivateRoute(mux, "GET /projects/{project_id}", projects.HandleEditProjectPage)
 	// addPrivateRoute(mux, "POST /projects/", projects.HandleProjectDetailSubmit)
@@ -77,7 +87,21 @@ func newRouter() *http.ServeMux {
 	return mux
 }
 
+func handleStaticAssets(w http.ResponseWriter, r *http.Request) {
+	if strings.HasSuffix(r.URL.Path, ".woff2") {
+		w.Header().Set("Cache-Control", "public, max-age=31536000") // 1 year
+	}
+
+	http.FileServer(http.FS(assets)).ServeHTTP(w, r)
+}
+
 func addPrivateRoute(mux *http.ServeMux, pattern string, handlerFunc func(w http.ResponseWriter, r *http.Request)) {
 	handler := http.HandlerFunc(handlerFunc)
 	mux.HandleFunc(pattern, auth.EnsureAuthenticated(handler))
+}
+
+func runBackgroundTasks() {
+	for range time.Tick(24 * time.Hour) {
+		session.DeleteExpiredSessions()
+	}
 }

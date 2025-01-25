@@ -6,12 +6,11 @@
         {{template "navbar" .Navbar}}
 
         <div class="section">
-            <div class="title">Projects</div>
+            <div class="title-bar">
+                <div class="title">Projects</div>
+                {{template "button" .NewProjectButton}}
+            </div>
             <table>
-                <tr>
-                    <th>Project Name</th>
-                    <th>Actions</th>
-                </tr>
                 {{range .Projects}}
                 <tr>
                     <td class="text">{{.Name}}</td>
@@ -21,8 +20,22 @@
                 </tr>
                 {{end}}
             </table>
+        </div>
+
+        <div class="section">
+            <div class="title-bar">
+                <div class="title">Password</div>
+            </div>
             <div class="v-space-12"></div>
-            {{template "button" .NewProjectButton}}
+            {{template "button" .ChangePasswordButton}}
+        </div>
+
+        <div class="section">
+            <div class="title-bar">
+                <div class="title">Server URL</div>
+            </div>
+            <div class="v-space-12"></div>
+            {{template "button" .ServerURLButton}}
         </div>
     </body>
 

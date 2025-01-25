@@ -3,6 +3,7 @@ package home
 import (
 	"fmt"
 	"mouji/commons/components"
+	"mouji/commons/config"
 	"mouji/commons/templates"
 	"mouji/features/pageviews"
 	"mouji/features/projects"
@@ -13,7 +14,7 @@ import (
 
 type urlState struct {
 	selectedProjectID          string
-	selectedDateRange          string
+	selectedDateRange          components.DataRangeType
 	currentPageViewTableOffset string
 }
 
@@ -23,23 +24,37 @@ type pageViewsTable struct {
 	Pagination           components.Pagination
 }
 
+type pageViewsChart struct {
+	TotalCount int
+	BarChart   components.BarChart
+}
+
 func HandleHomePage(w http.ResponseWriter, r *http.Request) {
 	hasUsers := users.HasUsers()
-	projects := projects.GetAllProjects()
-
 	if !hasUsers {
-		http.Redirect(w, r, "/users/new", http.StatusSeeOther)
+		http.Redirect(w, r, "/users/new?is_onboarding=true", http.StatusSeeOther)
 		return
 	}
 
+	server_url, err := config.GetConfig("server_url")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if server_url == "" {
+		http.Redirect(w, r, "/settings/server_url?is_onboarding=true", http.StatusSeeOther)
+		return
+	}
+
+	projects := projects.GetAllProjects()
 	if len(projects) == 0 {
-		http.Redirect(w, r, "/projects/new", http.StatusSeeOther)
+		http.Redirect(w, r, "/projects/new?is_onboarding=true", http.StatusSeeOther)
 		return
 	}
 
 	var state urlState
 	state.selectedProjectID = r.URL.Query().Get("project_id")
-	state.selectedDateRange = r.URL.Query().Get("daterange")
+	state.selectedDateRange = components.DataRangeType(r.URL.Query().Get("daterange"))
 	state.currentPageViewTableOffset = r.URL.Query().Get("current_pageview_table_offset")
 
 	if state.selectedProjectID == "" {
@@ -54,12 +69,35 @@ func HandleHomePage(w http.ResponseWriter, r *http.Request) {
 func renderHomePage(w http.ResponseWriter, state urlState, projects []projects.ProjectRecord) {
 	type templateData struct {
 		Navbar         components.Navbar
+		PageViewsChart pageViewsChart
 		PageViewsTable pageViewsTable
 	}
 
 	navbar := getNavbar(state, projects)
-	pageviews, err := getPageViewsTable(state)
 
+	pageViewsCount, err := pageviews.GetPageViewCountsByInterval(state.selectedProjectID, state.selectedDateRange)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	totalCount := 0
+	barChartInputDataPoints := []components.BarChartInputDataPoint{}
+	for _, record := range pageViewsCount {
+		barChartInputDataPoint := components.BarChartInputDataPoint{
+			Label: record.Interval,
+			Data:  record.Count,
+		}
+		barChartInputDataPoints = append(barChartInputDataPoints, barChartInputDataPoint)
+		totalCount = record.TotalCount
+	}
+	barChart := components.NewBarChart(barChartInputDataPoints)
+	chart := pageViewsChart{
+		TotalCount: totalCount,
+		BarChart:   barChart,
+	}
+
+	table, err := getPageViewsTable(state)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -67,7 +105,8 @@ func renderHomePage(w http.ResponseWriter, state urlState, projects []projects.P
 
 	tmplData := templateData{
 		Navbar:         navbar,
-		PageViewsTable: pageviews,
+		PageViewsChart: chart,
+		PageViewsTable: table,
 	}
 
 	templates.Render(w, "home.html", tmplData)
@@ -81,6 +120,7 @@ func getNavbar(state urlState, projects []projects.ProjectRecord) components.Nav
 		var option components.DropdownOption
 		option.Name = project.Name
 		option.Link = fmt.Sprintf("/?project_id=%s&daterange=%s", project.ProjectID, state.selectedDateRange)
+		option.Value = ""
 		allOptions = append(allOptions, option)
 		if project.ProjectID == state.selectedProjectID {
 			selectedOption = option
@@ -91,6 +131,7 @@ func getNavbar(state urlState, projects []projects.ProjectRecord) components.Nav
 	}
 	navbar.ProjectsDropdown.SelectedOption = selectedOption
 	navbar.ProjectsDropdown.AllOptions = allOptions
+	navbar.ProjectsDropdown.InputName = ""
 
 	navbar.DateRange = getDateRange(state)
 

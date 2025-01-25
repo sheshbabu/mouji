@@ -6,11 +6,11 @@
         {{template "navbar" .Navbar}}
 
         <div class="section">
-            {{if eq .HasUsers false}}
+            {{if eq .IsOnboarding true}}
                 <div class="title">Let's get started!</div>
                 <div class="subtitle">Create your admin account</div>
             {{end}}
-            <form action="/users/new" method="post">
+            <form {{if eq .IsOnboarding true}}action="/users/new?is_onboarding=true"{{else}}action="/users/new"{{end}} method="post">
                 {{template "input" .EmailInput}}
                 {{template "input" .PasswordInput}}
                 <div class="v-space-24"></div>

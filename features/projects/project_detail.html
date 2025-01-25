@@ -9,9 +9,23 @@
             {{if eq .IsNewProject true}}
                 <div class="title">New Project</div>
             {{end}}
-            <form {{if eq .IsNewProject true}}action="/projects/new"{{else}}action="/projects/{{.ProjectID}}"{{end}} method="post">
+            <form 
+                {{if eq .IsNewProject true}}
+                    {{if eq .IsOnboarding true}}
+                        action="/projects/new?is_onboarding=true"
+                    {{else}}
+                        action="/projects/new"
+                    {{end}}
+                {{else}}
+                    {{if eq .IsOnboarding true}}
+                        action="/projects/{{.ProjectID}}?is_onboarding=true"
+                    {{else}}
+                        action="/projects/{{.ProjectID}}"
+                    {{end}}
+                {{end}} 
+                    method="post">
                 {{template "input" .ProjectNameInput}}
-                {{template "input" .BaseURLInput}}
+                {{template "input" .SiteURLInput}}
                 {{if eq .IsNewProject false}}
                     {{template "textarea" .TrackingSnippetInput}}
                 {{end}}
