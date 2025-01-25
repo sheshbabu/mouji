@@ -58,7 +58,7 @@ func GetPaginatedPageViews(projectID string, daterange components.DataRangeType,
 		WHERE
 			project_id = ?
 			AND
-			received_at >= DATE('2024-05-24', ?)
+			received_at >= DATETIME('2024-05-24', ?)
 		GROUP BY
 			path
 		ORDER BY
@@ -117,7 +117,7 @@ func GetPageViewCountsByInterval(projectID string, daterange components.DataRang
 			WHERE
 				project_id = ?
 				AND
-				received_at >= DATETIME('now', '-24 hours')
+				received_at >= DATETIME('2024-05-24', '-24 hours')
 			GROUP BY
 				STRFTIME('%Y-%m-%d %H', received_at)
 			ORDER BY
@@ -135,7 +135,7 @@ func GetPageViewCountsByInterval(projectID string, daterange components.DataRang
 			WHERE
 				project_id = ?
 				AND
-				received_at >= DATETIME('now', ?)
+				received_at >= DATETIME('2024-05-24', ?)
 			GROUP BY
 				interval
 			ORDER BY
@@ -153,7 +153,7 @@ func GetPageViewCountsByInterval(projectID string, daterange components.DataRang
 			WHERE
 				project_id = ?
 				AND
-				received_at >= DATETIME('now', '-1 years')
+				received_at >= DATETIME('2024-05-24', '-1 years')
 			GROUP BY
 				interval
 			ORDER BY
